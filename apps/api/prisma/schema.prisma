@@ -4,5 +4,487 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Organización — Multi-sucursal
+// ============================================================
+
+model Branch {
+  id       String  @id @default(cuid())
+  name     String
+  address  String?
+  phone    String?
+  isActive Boolean @default(true)
+
+  users           User[]           @relation("BranchStaff")
+  inventories     Inventory[]
+  stockMovements  StockMovement[]
+  queueEntries    QueueEntry[]
+  tickets         Ticket[]
+  cashRegisters   CashRegister[]
+  customers       Customer[]
+  settings        Setting[]
+  commissionRules CommissionRule[]
+  auditLogs       AuditLog[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft delete
+
+  @@index([isActive])
+}
+
+// ============================================================
+// Módulo 6 — Administración y Seguridad
+// ============================================================
+
+enum Role {
+  OWNER
+  CASHIER
+  BARBER
+}
+
+model User {
+  id           String  @id @default(cuid())
+  name         String
+  email        String  @unique
+  passwordHash String
+  role         Role    @default(BARBER)
+  isActive     Boolean @default(true)
+
+  // Sucursal principal. null = acceso global (típicamente OWNER).
+  branchId String?
+  branch   Branch? @relation("BranchStaff", fields: [branchId], references: [id], onDelete: SetNull)
+
+  // Override del % base de comisión para este barbero. null = usa el global (Setting).
+  commissionRate Decimal? @db.Decimal(5, 2)
+
+  ticketsAsBarber   Ticket[]         @relation("TicketBarber")
+  paymentsAsCashier Payment[]        @relation("PaymentCashier")
+  queueAssignments  QueueEntry[]     @relation("QueueBarber")
+  commissionRules   CommissionRule[]
+  registersOpened   CashRegister[]   @relation("RegisterOpenedBy")
+  registersClosed   CashRegister[]   @relation("RegisterClosedBy")
+  stockMovements    StockMovement[]  @relation("StockMovementBy")
+  auditLogs         AuditLog[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([branchId])
+  @@index([role])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  branchId   String?
+  branch     Branch?  @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  action     String // ej. "TICKET_VOIDED", "COMMISSION_RULE_UPDATED"
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([branchId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Módulo 5 — Clientes y Fidelización
+// ============================================================
+
+model Customer {
+  id            String  @id @default(cuid())
+  name          String
+  phone         String?
+  email         String?
+  notes         String?
+  loyaltyPoints Int     @default(0)
+  isActive      Boolean @default(true)
+
+  // Sucursal donde se registró (informativo; el cliente puede atenderse en cualquiera).
+  branchId String?
+  branch   Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
+
+  tickets             Ticket[]
+  queueEntries        QueueEntry[]
+  loyaltyTransactions LoyaltyTransaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([phone])
+  @@index([branchId])
+}
+
+// Ledger inmutable de puntos de fidelización.
+model LoyaltyTransaction {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  points     Int // positivo = acumula, negativo = canje
+  reason     String
+  ticketId   String?
+  ticket     Ticket?  @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+  @@index([ticketId])
+}
+
+// ============================================================
+// Módulo 4 — Inventario y Catálogo
+// ============================================================
+
+model ServiceCategory {
+  id        String  @id @default(cuid())
+  name      String
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  services        Service[]
+  commissionRules CommissionRule[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Service {
+  id              String  @id @default(cuid())
+  name            String
+  description     String?
+  price           Decimal @db.Decimal(10, 2)
+  durationMinutes Int? // estimado, para planeación
+  isActive        Boolean @default(true)
+
+  categoryId String?
+  category   ServiceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  ticketItems     TicketItem[]
+  commissionRules CommissionRule[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  sku         String?  @unique
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  cost        Decimal? @db.Decimal(10, 2) // costo de adquisición, para margen
+  isActive    Boolean  @default(true)
+
+  inventories     Inventory[]
+  stockMovements  StockMovement[]
+  ticketItems     TicketItem[]
+  commissionRules CommissionRule[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([isActive])
+}
+
+// Stock por sucursal (el catálogo es compartido, las existencias son locales).
+model Inventory {
+  id                String  @id @default(cuid())
+  branchId          String
+  branch            Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  productId         String
+  product           Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity          Int     @default(0)
+  lowStockThreshold Int     @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([branchId, productId])
+  @@index([productId])
+}
+
+enum StockMovementType {
+  PURCHASE // entrada por compra
+  SALE // salida por venta (ticket)
+  ADJUSTMENT // ajuste manual (+/-)
+  TRANSFER_IN
+  TRANSFER_OUT
+  RETURN
+}
+
+// Ledger inmutable de movimientos de inventario (auditable).
+model StockMovement {
+  id          String            @id @default(cuid())
+  branchId    String
+  branch      Branch            @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type        StockMovementType
+  quantity    Int // con signo: +entrada / -salida
+  reference   String? // ej. ticketId, nota de compra
+  createdById String?
+  createdBy   User?             @relation("StockMovementBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime          @default(now())
+
+  @@index([branchId, productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Módulo 3 — Motor de Comisiones
+// ============================================================
+
+enum CommissionType {
+  PERCENTAGE // value = % sobre el lineTotal
+  FIXED // value = monto fijo en S/ por unidad
+}
+
+// Excepción de comisión. La app elige la regla activa de mayor `priority` cuyo
+// ámbito (barbero / servicio / categoría / producto / sucursal) coincida.
+// Fallback si ninguna aplica: User.commissionRate  >  Setting global.
+// Ej: "S/5 fijos por cada cera" => productId=cera, type=FIXED, value=5.
+model CommissionRule {
+  id       String         @id @default(cuid())
+  name     String?
+  priority Int            @default(0) // mayor gana ante empates de especificidad
+  type     CommissionType
+  value    Decimal        @db.Decimal(10, 2)
+  isActive Boolean        @default(true)
+
+  // Ámbito (todos opcionales = aplica a todo lo no especificado).
+  barberId          String?
+  barber            User?            @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  serviceId         String?
+  service           Service?         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceCategoryId String?
+  serviceCategory   ServiceCategory? @relation(fields: [serviceCategoryId], references: [id], onDelete: Cascade)
+  productId         String?
+  product           Product?         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  branchId          String?
+  branch            Branch?          @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  // Vigencia opcional (para promociones temporales).
+  startsAt DateTime?
+  endsAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([barberId])
+  @@index([serviceId])
+  @@index([serviceCategoryId])
+  @@index([productId])
+  @@index([branchId])
+  @@index([isActive])
+}
+
+// Configuración global o por sucursal (branchId null = global).
+// Ej: key="commission_base_percentage" value="40"; key="tax_rate" value="18".
+model Setting {
+  id        String   @id @default(cuid())
+  branchId  String?
+  branch    Branch?  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@unique([branchId, key])
+  @@index([key])
+}
+
+// ============================================================
+// Módulo 1 — Operaciones en Tiempo Real (Cola)
+// ============================================================
+
+enum QueueStatus {
+  WAITING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model QueueEntry {
+  id       String      @id @default(cuid())
+  branchId String
+  branch   Branch      @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  status   QueueStatus @default(WAITING)
+  position Int? // orden manual en la cola
+
+  // Cliente registrado (opcional) o datos sueltos para walk-in anónimo.
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerName  String?
+  customerPhone String?
+
+  // null = cola general (cualquier barbero lo puede tomar).
+  assignedBarberId String?
+  assignedBarber   User?   @relation("QueueBarber", fields: [assignedBarberId], references: [id], onDelete: SetNull)
+
+  ticket Ticket?
+
+  createdAt DateTime  @default(now())
+  calledAt  DateTime?
+  closedAt  DateTime?
+
+  @@index([branchId, status])
+  @@index([assignedBarberId])
+  @@index([customerId])
+}
+
+// ============================================================
+// Módulo 2 — POS y Flujo de Caja
+// ============================================================
+
+enum TicketStatus {
+  OPEN // creado por el barbero, en cola del POS
+  PARTIALLY_PAID // pago dividido en curso
+  PAID
+  VOIDED
+}
+
+enum ItemType {
+  SERVICE
+  PRODUCT
+}
+
+model Ticket {
+  id       String       @id @default(cuid())
+  code     String       @unique // correlativo legible del ticket
+  status   TicketStatus @default(OPEN)
+  branchId String
+  branch   Branch       @relation(fields: [branchId], references: [id])
+
+  barberId String
+  barber   User   @relation("TicketBarber", fields: [barberId], references: [id])
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  queueEntryId String?     @unique
+  queueEntry   QueueEntry? @relation(fields: [queueEntryId], references: [id], onDelete: SetNull)
+
+  // Importes (snapshot). total = subtotal - discountAmount + taxAmount.
+  subtotal       Decimal @db.Decimal(10, 2)
+  discountAmount Decimal @default(0) @db.Decimal(10, 2)
+  taxAmount      Decimal @default(0) @db.Decimal(10, 2)
+  tipAmount      Decimal @default(0) @db.Decimal(10, 2) // propina, atribuida al barbero
+  total          Decimal @db.Decimal(10, 2)
+
+  items               TicketItem[]
+  payments            Payment[]
+  loyaltyTransactions LoyaltyTransaction[]
+
+  createdAt DateTime  @default(now())
+  paidAt    DateTime?
+  voidedAt  DateTime?
+
+  @@index([branchId, status])
+  @@index([barberId])
+  @@index([customerId])
+  @@index([createdAt])
+}
+
+// Línea de ticket. Apunta a un Service O a un Product (discriminado por itemType).
+// unitPrice, tax* y commission* son SNAPSHOTS al momento de la venta: el historial
+// es inmutable aunque luego cambien precios, impuestos o reglas de comisión.
+model TicketItem {
+  id       String   @id @default(cuid())
+  ticketId String
+  ticket   Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  itemType ItemType
+
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  description    String // nombre del servicio/producto al momento de la venta
+  quantity       Int     @default(1)
+  unitPrice      Decimal @db.Decimal(10, 2)
+  discountAmount Decimal @default(0) @db.Decimal(10, 2)
+  taxRate        Decimal @default(0) @db.Decimal(5, 2)
+  taxAmount      Decimal @default(0) @db.Decimal(10, 2)
+  lineTotal      Decimal @db.Decimal(10, 2) // neto de la línea (post descuento, con impuesto)
+
+  commissionType   CommissionType
+  commissionValue  Decimal        @db.Decimal(10, 2) // % o monto fijo aplicado
+  commissionAmount Decimal        @db.Decimal(10, 2) // comisión calculada para el barbero
+
+  @@index([ticketId])
+  @@index([serviceId])
+  @@index([productId])
+}
+
+// Método de pago configurable (no enum) — el dueño puede agregar Tarjeta, etc.
+model PaymentMethod {
+  id        String  @id @default(cuid())
+  code      String  @unique // "CASH", "YAPE", "PLIN", ...
+  name      String
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  payments Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Registro inmutable de cobros. Un Ticket puede tener varios (pago dividido).
+model Payment {
+  id       String @id @default(cuid())
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
+
+  paymentMethodId String
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  amount          Decimal       @db.Decimal(10, 2)
+
+  cashierId String
+  cashier   User   @relation("PaymentCashier", fields: [cashierId], references: [id])
+
+  cashRegisterId String?
+  cashRegister   CashRegister? @relation(fields: [cashRegisterId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+  @@index([paymentMethodId])
+  @@index([cashRegisterId])
+  @@index([createdAt])
+}
+
+// Sesión de caja / turno. El Z-Report se deriva de los Payment ligados al registro.
+model CashRegister {
+  id            String   @id @default(cuid())
+  branchId      String
+  branch        Branch   @relation(fields: [branchId], references: [id])
+  openedById    String
+  openedBy      User     @relation("RegisterOpenedBy", fields: [openedById], references: [id])
+  openingAmount Decimal  @db.Decimal(10, 2) // fondo de caja inicial
+  openedAt      DateTime @default(now())
+
+  closedById         String?
+  closedBy           User?     @relation("RegisterClosedBy", fields: [closedById], references: [id])
+  closingCountedCash Decimal?  @db.Decimal(10, 2) // efectivo físico contado en el arqueo
+  closedAt           DateTime?
+  notes              String?
+
+  payments Payment[]
+
+  @@index([branchId])
+  @@index([openedAt])
 }
