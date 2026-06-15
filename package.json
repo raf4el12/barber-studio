@@ -1,0 +1,13 @@
+{
+  "name": "barber-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:api": "pnpm --filter api start:dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev": "bun run --parallel dev:api dev:web"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

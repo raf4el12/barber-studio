@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: barber_studio_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: barber_studio
+    ports:
+      - "5432:5432"
+    volumes:
+      - barber_studio_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  barber_studio_db_data:
