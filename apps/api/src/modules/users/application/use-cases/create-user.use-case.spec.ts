@@ -46,4 +46,11 @@ describe('CreateUserUseCase', () => {
       passwordHash: 'HASHED',
     });
   });
+
+  it('allows registration with an email previously used by a soft-deleted user', async () => {
+    // existsByEmail returns false because softDeleteExtension filters out deletedAt != null
+    users.existsByEmail.mockResolvedValue(false);
+    await useCase.execute(dto);
+    expect(users.create).toHaveBeenCalled();
+  });
 });
