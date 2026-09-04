@@ -242,7 +242,7 @@ describe('POS punta a punta (e2e)', () => {
     await request(server)
       .post(`/tickets/${ticketBody.id}/payments`)
       .set(auth(ownerToken))
-      .send({ paymentMethodId: cashMethodId, amount: 27.2, tipAmount: 2 })
+      .send({ paymentMethodId: cashMethodId, amount: 29.2, tipAmount: 2 })
       .expect(201)
       .expect((res: { body: { status: TicketStatus; tipAmount: number } }) => {
         if (res.body.status !== TicketStatus.PAID) {

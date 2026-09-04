@@ -148,6 +148,26 @@ describe('AddPaymentUseCase', () => {
     expect(events.emitTicketPaid).not.toHaveBeenCalled();
   });
 
+  it('pago que no cubre saldo con propina sigue PARTIALLY (27.2 de 29.2)', async () => {
+    const { tickets, inventory, useCase } = setup(
+      detail({
+        status: TicketStatus.PARTIALLY_PAID,
+        amountPaid: 20,
+        amountDue: 27.2,
+      }),
+    );
+    await useCase.execute(
+      'ticket-1',
+      { paymentMethodId: 'pm-cash', amount: 27.2, tipAmount: 2 },
+      'cashier-1',
+    );
+    expect(tickets.updateTicket).toHaveBeenCalledWith(
+      'ticket-1',
+      expect.objectContaining({ status: TicketStatus.PARTIALLY_PAID }),
+    );
+    expect(inventory.registerMovement).not.toHaveBeenCalled();
+  });
+
   it('pago que completa (20 + 27.2) → PAID con stock SALE y evento paid', async () => {
     const { tickets, inventory, events, useCase } = setup(
       detail({

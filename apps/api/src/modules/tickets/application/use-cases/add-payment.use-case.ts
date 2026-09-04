@@ -89,7 +89,7 @@ export class AddPaymentUseCase {
     if (dto.amount > due) {
       throw new BadRequestException(`Sobrepago: el saldo es ${due}`);
     }
-    const completes = roundMoney(ticket.amountPaid + dto.amount) >= due;
+    const completes = roundMoney(dto.amount) >= due;
 
     if (completes) {
       await this.assertStock(ticket.branchId, ticket.items);
