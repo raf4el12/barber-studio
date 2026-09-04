@@ -11,6 +11,7 @@ import { ProductsModule } from './modules/products/application/products.module';
 import { InventoryModule } from './modules/inventory/application/inventory.module';
 import { SettingsModule } from './modules/settings/application/settings.module';
 import { CommissionRulesModule } from './modules/commission-rules/application/commission-rules.module';
+import { QueueModule } from './modules/queue/application/queue.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AppController } from './app.controller';
@@ -29,6 +30,7 @@ import { AppService } from './app.service';
     InventoryModule,
     SettingsModule,
     CommissionRulesModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [
