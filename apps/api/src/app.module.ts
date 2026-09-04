@@ -15,6 +15,7 @@ import { QueueModule } from './modules/queue/application/queue.module';
 import { PaymentMethodsModule } from './modules/payment-methods/application/payment-methods.module';
 import { CashRegistersModule } from './modules/cash-registers/application/cash-registers.module';
 import { TicketsModule } from './modules/tickets/application/tickets.module';
+import { CustomersModule } from './modules/customers/application/customers.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AppController } from './app.controller';
@@ -37,6 +38,7 @@ import { AppService } from './app.service';
     PaymentMethodsModule,
     CashRegistersModule,
     TicketsModule,
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [

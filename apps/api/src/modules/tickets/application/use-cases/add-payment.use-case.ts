@@ -26,6 +26,7 @@ import {
   INVENTORY_REPOSITORY,
   type IInventoryRepository,
 } from '../../../inventory/domain/repositories/inventory.repository';
+import { AccrueLoyaltyUseCase } from '../../../customers/application/use-cases/loyalty.use-case';
 import { roundMoney } from '../services/ticket-totals.service';
 import { AddPaymentDto } from '../dto/add-payment.dto';
 
@@ -40,6 +41,7 @@ export class AddPaymentUseCase {
     @Inject(INVENTORY_REPOSITORY)
     private readonly inventory: IInventoryRepository,
     @Inject(TICKET_EVENTS) private readonly events: ITicketEvents,
+    private readonly accrueLoyalty: AccrueLoyaltyUseCase,
   ) {}
 
   async execute(
@@ -124,6 +126,15 @@ export class AddPaymentUseCase {
         quantity: -item.quantity,
         reference: ticket.code,
         createdById: cashierId,
+      });
+    }
+    if (ticket.customerId) {
+      await this.accrueLoyalty.execute({
+        customerId: ticket.customerId,
+        total: ticket.total,
+        ticketId,
+        ticketCode: ticket.code,
+        branchId: ticket.branchId,
       });
     }
     await this.events.emitTicketPaid(ticket.branchId, ticketId);

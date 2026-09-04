@@ -47,7 +47,8 @@ export interface CreatePaymentData {
 }
 
 export interface TicketFilters {
-  branchId: string;
+  branchId?: string;
   status?: TicketStatus;
   barberId?: string;
+  customerId?: string;
 }

@@ -19,6 +19,7 @@ import { InventoryModule } from '../../inventory/application/inventory.module';
 import { PaymentMethodsModule } from '../../payment-methods/application/payment-methods.module';
 import { CashRegistersModule } from '../../cash-registers/application/cash-registers.module';
 import { QueueModule } from '../../queue/application/queue.module';
+import { CustomersModule } from '../../customers/application/customers.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { QueueModule } from '../../queue/application/queue.module';
     PaymentMethodsModule,
     CashRegistersModule,
     forwardRef(() => QueueModule),
+    forwardRef(() => CustomersModule),
   ],
   controllers: [TicketsController],
   providers: [

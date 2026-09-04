@@ -103,14 +103,16 @@ function setup(current: TicketDetail = detail()) {
     emitTicketUpdated: jest.fn().mockResolvedValue(undefined),
     emitTicketPaid: jest.fn().mockResolvedValue(undefined),
   };
+  const loyalty = { execute: jest.fn().mockResolvedValue(null) };
   const useCase = new AddPaymentUseCase(
     tickets as never,
     methods as never,
     registers as never,
     inventory as never,
     events as never,
+    loyalty as never,
   );
-  return { tickets, methods, registers, inventory, events, useCase };
+  return { tickets, methods, registers, inventory, events, loyalty, useCase };
 }
 
 describe('AddPaymentUseCase', () => {
@@ -221,5 +223,44 @@ describe('AddPaymentUseCase', () => {
         'cashier-1',
       ),
     ).rejects.toThrow(NotFoundException);
+  });
+
+  it('al completar con customerId acumula puntos de fidelización', async () => {
+    const { loyalty, useCase } = setup(
+      detail({
+        customerId: 'cust-1',
+        status: TicketStatus.PARTIALLY_PAID,
+        amountPaid: 47.19,
+        amountDue: 0.01,
+      }),
+    );
+    await useCase.execute(
+      'ticket-1',
+      { paymentMethodId: 'pm-cash', amount: 0.01 },
+      'cashier-1',
+    );
+    expect(loyalty.execute).toHaveBeenCalledWith({
+      customerId: 'cust-1',
+      total: 47.2,
+      ticketId: 'ticket-1',
+      ticketCode: 'T-20260601-AAAA',
+      branchId: 'branch-1',
+    });
+  });
+
+  it('al completar sin customerId no acumula', async () => {
+    const { loyalty, useCase } = setup(
+      detail({
+        status: TicketStatus.PARTIALLY_PAID,
+        amountPaid: 20,
+        amountDue: 27.2,
+      }),
+    );
+    await useCase.execute(
+      'ticket-1',
+      { paymentMethodId: 'pm-cash', amount: 27.2 },
+      'cashier-1',
+    );
+    expect(loyalty.execute).not.toHaveBeenCalled();
   });
 });

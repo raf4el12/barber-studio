@@ -56,6 +56,8 @@ async function main() {
   await upsertGlobalSetting('tax_rate', '18');
   // Base de la comisión: importe del ítem antes de descuento e impuesto.
   await upsertGlobalSetting('commission_base', 'pre_tax');
+  // Puntos de fidelización: 1 punto por cada S/10 de compra.
+  await upsertGlobalSetting('loyalty_points_per_currency', '10');
 
   console.log('Seed completado: sucursal, dueña, métodos de pago, settings.');
 }

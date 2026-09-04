@@ -45,9 +45,12 @@ export class PrismaTicketRepository implements ITicketRepository {
   async findAll(filters: TicketFilters): Promise<TicketEntity[]> {
     const rows = await this.prisma.ticket.findMany({
       where: {
-        branchId: filters.branchId,
+        ...(filters.branchId !== undefined && { branchId: filters.branchId }),
         ...(filters.status !== undefined && { status: filters.status }),
         ...(filters.barberId !== undefined && { barberId: filters.barberId }),
+        ...(filters.customerId !== undefined && {
+          customerId: filters.customerId,
+        }),
       },
       orderBy: { createdAt: 'desc' },
     });

@@ -11,7 +11,7 @@ export class FindAllTicketsUseCase {
     @Inject(TICKET_REPOSITORY) private readonly tickets: ITicketRepository,
   ) {}
 
-  execute(branchId: string, status?: TicketStatus, barberId?: string) {
+  execute(branchId?: string, status?: TicketStatus, barberId?: string) {
     return this.tickets.findAll({ branchId, status, barberId });
   }
 }
