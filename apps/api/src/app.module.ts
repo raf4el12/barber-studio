@@ -9,6 +9,8 @@ import { ServiceCategoriesModule } from './modules/service-categories/applicatio
 import { ServicesModule } from './modules/services/application/services.module';
 import { ProductsModule } from './modules/products/application/products.module';
 import { InventoryModule } from './modules/inventory/application/inventory.module';
+import { SettingsModule } from './modules/settings/application/settings.module';
+import { CommissionRulesModule } from './modules/commission-rules/application/commission-rules.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AppController } from './app.controller';
@@ -25,6 +27,8 @@ import { AppService } from './app.service';
     ServicesModule,
     ProductsModule,
     InventoryModule,
+    SettingsModule,
+    CommissionRulesModule,
   ],
   controllers: [AppController],
   providers: [

@@ -54,6 +54,8 @@ async function main() {
 
   await upsertGlobalSetting('commission_base_percentage', '40');
   await upsertGlobalSetting('tax_rate', '18');
+  // Base de la comisión: importe del ítem antes de descuento e impuesto.
+  await upsertGlobalSetting('commission_base', 'pre_tax');
 
   console.log('Seed completado: sucursal, dueña, métodos de pago, settings.');
 }
