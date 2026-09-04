@@ -10,6 +10,7 @@ describe('RegisterStockMovementUseCase', () => {
       'findByBranchAndProduct' | 'registerMovement'
     >
   >;
+  let audit: { execute: jest.Mock };
   let useCase: RegisterStockMovementUseCase;
 
   beforeEach(() => {
@@ -17,8 +18,10 @@ describe('RegisterStockMovementUseCase', () => {
       findByBranchAndProduct: jest.fn().mockResolvedValue(null),
       registerMovement: jest.fn().mockResolvedValue({} as any),
     };
+    audit = { execute: jest.fn().mockResolvedValue(undefined) };
     useCase = new RegisterStockMovementUseCase(
       repo as unknown as IInventoryRepository,
+      audit as never,
     );
   });
 
@@ -106,5 +109,27 @@ describe('RegisterStockMovementUseCase', () => {
       reference: 'Ajuste de inventario físico',
       createdById: 'u1',
     });
+    expect(audit.execute).toHaveBeenCalledWith({
+      userId: 'u1',
+      branchId: 'b1',
+      action: 'STOCK_ADJUSTED',
+      entityType: 'Product',
+      entityId: 'p1',
+      metadata: { quantity: -5, reference: 'Ajuste de inventario físico' },
+    });
+  });
+
+  it('no audita movimientos que no son ajuste', async () => {
+    await useCase.execute(
+      {
+        productId: 'p1',
+        branchId: 'b1',
+        type: StockMovementType.PURCHASE,
+        quantity: 5,
+      },
+      'b1',
+      'u1',
+    );
+    expect(audit.execute).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,10 @@
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { Roles } from '../../../../common/decorators/roles.decorator';
+import {
+  CurrentUser,
+  type AuthUser,
+} from '../../../../common/decorators/current-user.decorator';
 import { UpsertSettingDto } from '../../application/dto/upsert-setting.dto';
 import { GetSettingUseCase } from '../../application/use-cases/get-setting.use-case';
 import { ListSettingsUseCase } from '../../application/use-cases/list-settings.use-case';
@@ -26,7 +30,7 @@ export class SettingsController {
   }
 
   @Put()
-  upsert(@Body() dto: UpsertSettingDto) {
-    return this.upsertSetting.execute(dto);
+  upsert(@Body() dto: UpsertSettingDto, @CurrentUser() user: AuthUser) {
+    return this.upsertSetting.execute(dto, user.id);
   }
 }

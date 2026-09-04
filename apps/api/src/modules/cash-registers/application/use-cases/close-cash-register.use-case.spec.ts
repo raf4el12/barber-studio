@@ -23,19 +23,29 @@ describe('CloseCashRegisterUseCase', () => {
       findById: jest.fn().mockResolvedValue(register()),
       close: jest.fn(),
     };
+    const audit = { execute: jest.fn().mockResolvedValue(undefined) };
     const useCase = new CloseCashRegisterUseCase(
       repo as unknown as ICashRegisterRepository,
+      audit as never,
     );
-    return { repo, useCase };
+    return { repo, audit, useCase };
   }
 
-  it('cierra con arqueo de efectivo contado', async () => {
-    const { repo, useCase } = setup();
+  it('cierra con arqueo de efectivo contado y audita', async () => {
+    const { repo, audit, useCase } = setup();
     await useCase.execute('reg-1', { closingCountedCash: 540 }, 'user-2');
     expect(repo.close).toHaveBeenCalledWith('reg-1', {
       closedById: 'user-2',
       closingCountedCash: 540,
       notes: null,
+    });
+    expect(audit.execute).toHaveBeenCalledWith({
+      userId: 'user-2',
+      branchId: 'branch-1',
+      action: 'CASH_REGISTER_CLOSED',
+      entityType: 'CashRegister',
+      entityId: 'reg-1',
+      metadata: { openingAmount: 100, closingCountedCash: 540 },
     });
   });
 

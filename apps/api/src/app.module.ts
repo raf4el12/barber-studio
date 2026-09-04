@@ -17,6 +17,7 @@ import { CashRegistersModule } from './modules/cash-registers/application/cash-r
 import { TicketsModule } from './modules/tickets/application/tickets.module';
 import { CustomersModule } from './modules/customers/application/customers.module';
 import { ReportsModule } from './modules/reports/application/reports.module';
+import { AuditModule } from './modules/audit/application/audit.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AppController } from './app.controller';
@@ -41,6 +42,7 @@ import { AppService } from './app.service';
     TicketsModule,
     CustomersModule,
     ReportsModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [

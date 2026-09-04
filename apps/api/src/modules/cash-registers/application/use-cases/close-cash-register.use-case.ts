@@ -10,12 +10,15 @@ import {
   type ICashRegisterRepository,
 } from '../../domain/repositories/cash-register.repository';
 import { CloseCashRegisterDto } from '../dto/close-cash-register.dto';
+import { WriteAuditLogUseCase } from '../../../audit/application/use-cases/write-audit-log.use-case';
+import { AuditAction } from '../../../audit/domain/constants/audit-actions';
 
 @Injectable()
 export class CloseCashRegisterUseCase {
   constructor(
     @Inject(CASH_REGISTER_REPOSITORY)
     private readonly registers: ICashRegisterRepository,
+    private readonly audit: WriteAuditLogUseCase,
   ) {}
 
   async execute(
@@ -34,10 +37,22 @@ export class CloseCashRegisterUseCase {
     if (current.closedAt) {
       throw new BadRequestException('La caja ya está cerrada');
     }
-    return this.registers.close(id, {
+    const closed = await this.registers.close(id, {
       closedById: userId,
       closingCountedCash: dto.closingCountedCash,
       notes: dto.notes ?? current.notes,
     });
+    await this.audit.execute({
+      userId,
+      branchId: current.branchId,
+      action: AuditAction.CASH_REGISTER_CLOSED,
+      entityType: 'CashRegister',
+      entityId: id,
+      metadata: {
+        openingAmount: current.openingAmount,
+        closingCountedCash: dto.closingCountedCash,
+      },
+    });
+    return closed;
   }
 }

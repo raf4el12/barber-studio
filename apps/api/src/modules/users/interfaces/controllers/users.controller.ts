@@ -11,6 +11,10 @@ import {
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { Roles } from '../../../../common/decorators/roles.decorator';
+import {
+  CurrentUser,
+  type AuthUser,
+} from '../../../../common/decorators/current-user.decorator';
 import { CreateUserDto } from '../../application/dto/create-user.dto';
 import { UpdateUserDto } from '../../application/dto/update-user.dto';
 import { CreateUserUseCase } from '../../application/use-cases/create-user.use-case';
@@ -46,8 +50,12 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.updateUser.execute(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.updateUser.execute(id, dto, user.id);
   }
 
   @Delete(':id')

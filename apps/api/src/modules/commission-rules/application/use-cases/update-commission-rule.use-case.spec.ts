@@ -26,15 +26,22 @@ function existingRule(): CommissionRuleEntity {
 
 describe('UpdateCommissionRuleUseCase', () => {
   let repo: jest.Mocked<Pick<ICommissionRuleRepository, 'findById' | 'update'>>;
+  let audit: { execute: jest.Mock };
   let useCase: UpdateCommissionRuleUseCase;
 
   beforeEach(() => {
     repo = {
       findById: jest.fn().mockResolvedValue(existingRule()),
-      update: jest.fn(),
+      update: jest
+        .fn()
+        .mockImplementation((_id: string, data: object) =>
+          Promise.resolve({ ...existingRule(), ...data }),
+        ),
     };
+    audit = { execute: jest.fn().mockResolvedValue(undefined) };
     useCase = new UpdateCommissionRuleUseCase(
       repo as unknown as ICommissionRuleRepository,
+      audit as never,
     );
   });
 
@@ -59,5 +66,22 @@ describe('UpdateCommissionRuleUseCase', () => {
   it('actualiza convirtiendo fechas', async () => {
     await useCase.execute('rule-1', { value: 20 });
     expect(repo.update).toHaveBeenCalledWith('rule-1', { value: 20 });
+  });
+
+  it('audita before/after con el usuario actor', async () => {
+    repo.update.mockResolvedValue({ ...existingRule(), value: 20 });
+    await useCase.execute('rule-1', { value: 20 }, 'owner-1');
+    expect(audit.execute).toHaveBeenCalledWith({
+      userId: 'owner-1',
+      branchId: null,
+      action: 'COMMISSION_RULE_CHANGED',
+      entityType: 'CommissionRule',
+      entityId: 'rule-1',
+      metadata: {
+        operation: 'update',
+        before: expect.objectContaining({ value: 10 }),
+        after: expect.objectContaining({ value: 20 }),
+      },
+    });
   });
 });

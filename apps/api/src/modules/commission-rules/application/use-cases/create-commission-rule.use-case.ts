@@ -5,19 +5,32 @@ import {
 } from '../../domain/repositories/commission-rule.repository';
 import type { CreateCommissionRuleData } from '../../domain/interfaces/commission-rule-data.interface';
 import { CreateCommissionRuleDto } from '../dto/create-commission-rule.dto';
+import { WriteAuditLogUseCase } from '../../../audit/application/use-cases/write-audit-log.use-case';
+import { AuditAction } from '../../../audit/domain/constants/audit-actions';
+import { ruleSnapshot } from './commission-rule-audit';
 
 @Injectable()
 export class CreateCommissionRuleUseCase {
   constructor(
     @Inject(COMMISSION_RULE_REPOSITORY)
     private readonly rules: ICommissionRuleRepository,
+    private readonly audit: WriteAuditLogUseCase,
   ) {}
 
-  async execute(dto: CreateCommissionRuleDto) {
+  async execute(dto: CreateCommissionRuleDto, userId?: string) {
     const data = this.normalize(dto);
     this.assertValidScope(data);
     this.assertValidRange(data.startsAt, data.endsAt);
-    return this.rules.create(data);
+    const created = await this.rules.create(data);
+    await this.audit.execute({
+      userId,
+      branchId: created.branchId,
+      action: AuditAction.COMMISSION_RULE_CHANGED,
+      entityType: 'CommissionRule',
+      entityId: created.id,
+      metadata: { operation: 'create', after: ruleSnapshot(created) },
+    });
+    return created;
   }
 
   private normalize(dto: CreateCommissionRuleDto): CreateCommissionRuleData {

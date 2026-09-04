@@ -84,17 +84,19 @@ function setup(current: TicketDetail = detail()) {
   };
   const inventory = { registerMovement: jest.fn().mockResolvedValue({}) };
   const events = { emitTicketVoided: jest.fn().mockResolvedValue(undefined) };
+  const audit = { execute: jest.fn().mockResolvedValue(undefined) };
   const useCase = new VoidTicketUseCase(
     tickets as never,
     inventory as never,
     events as never,
+    audit as never,
   );
-  return { tickets, inventory, events, useCase };
+  return { tickets, inventory, events, audit, useCase };
 }
 
 describe('VoidTicketUseCase', () => {
-  it('anula ticket OPEN sin mover stock', async () => {
-    const { tickets, inventory, events, useCase } = setup(
+  it('anula ticket OPEN sin mover stock y audita con usuario', async () => {
+    const { tickets, inventory, events, audit, useCase } = setup(
       detail({
         status: TicketStatus.OPEN,
         paidAt: null,
@@ -112,6 +114,14 @@ describe('VoidTicketUseCase', () => {
       'branch-1',
       'ticket-1',
     );
+    expect(audit.execute).toHaveBeenCalledWith({
+      userId: 'user-1',
+      branchId: 'branch-1',
+      action: 'TICKET_VOIDED',
+      entityType: 'Ticket',
+      entityId: 'ticket-1',
+      metadata: { code: 'T-20260601-AAAA', statusBefore: 'OPEN', total: 59 },
+    });
   });
 
   it('anula ticket PAID revirtiendo stock solo de productos (RETURN x2)', async () => {

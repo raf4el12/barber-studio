@@ -6,8 +6,10 @@ import { RegisterStockMovementUseCase } from './use-cases/register-stock-movemen
 import { FindBranchInventoryUseCase } from './use-cases/find-branch-inventory.use-case';
 import { FindLowStockInventoryUseCase } from './use-cases/find-low-stock-inventory.use-case';
 import { UpdateStockThresholdUseCase } from './use-cases/update-stock-threshold.use-case';
+import { AuditModule } from '../../audit/application/audit.module';
 
 @Module({
+  imports: [AuditModule],
   controllers: [InventoryController],
   providers: [
     { provide: INVENTORY_REPOSITORY, useClass: PrismaInventoryRepository },

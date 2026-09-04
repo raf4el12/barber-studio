@@ -7,8 +7,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Role, TicketStatus } from '@prisma/client';
+import { BranchScopeGuard } from '../../../../common/guards/branch-scope.guard';
 import {
   CurrentUser,
   type AuthUser,
@@ -33,6 +35,7 @@ function scopedBranch(user: AuthUser, explicit?: string): string {
 }
 
 @Controller('tickets')
+@UseGuards(BranchScopeGuard)
 export class TicketsController {
   constructor(
     private readonly createTicket: CreateTicketUseCase,

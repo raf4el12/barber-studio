@@ -29,9 +29,10 @@ function setup() {
     getBalance: jest.fn().mockResolvedValue(5),
   };
   const settings = { execute: jest.fn().mockResolvedValue({ value: '10' }) };
+  const audit = { execute: jest.fn().mockResolvedValue(undefined) };
   const accrue = new AccrueLoyaltyUseCase(repo as never, settings as never);
-  const redeem = new RedeemLoyaltyUseCase(repo as never);
-  return { repo, settings, accrue, redeem };
+  const redeem = new RedeemLoyaltyUseCase(repo as never, audit as never);
+  return { repo, settings, accrue, redeem, audit };
 }
 
 describe('AccrueLoyaltyUseCase', () => {
@@ -95,14 +96,26 @@ describe('AccrueLoyaltyUseCase', () => {
 });
 
 describe('RedeemLoyaltyUseCase', () => {
-  it('canjea 5 puntos con motivo → asiento negativo', async () => {
-    const { repo, redeem } = setup();
-    await redeem.execute('cust-1', 5, 'Descuento cumpleaños');
+  it('canjea 5 puntos con motivo y audita con saldo posterior', async () => {
+    const { repo, redeem, audit } = setup();
+    repo.addTransaction.mockResolvedValue({
+      transaction: { id: 'tx-1' },
+      balance: 0,
+    });
+    await redeem.execute('cust-1', 5, 'Descuento cumpleaños', 'cashier-1');
     expect(repo.addTransaction).toHaveBeenCalledWith({
       customerId: 'cust-1',
       points: -5,
       reason: 'Descuento cumpleaños',
       ticketId: null,
+    });
+    expect(audit.execute).toHaveBeenCalledWith({
+      userId: 'cashier-1',
+      branchId: 'branch-1',
+      action: 'LOYALTY_REDEEMED',
+      entityType: 'Customer',
+      entityId: 'cust-1',
+      metadata: { points: 5, reason: 'Descuento cumpleaños', balanceAfter: 0 },
     });
   });
 

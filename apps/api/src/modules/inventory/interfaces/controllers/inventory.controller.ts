@@ -5,8 +5,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { BranchScopeGuard } from '../../../../common/guards/branch-scope.guard';
 import {
   CurrentUser,
   type AuthUser,
@@ -20,6 +22,7 @@ import { FindLowStockInventoryUseCase } from '../../application/use-cases/find-l
 import { UpdateStockThresholdUseCase } from '../../application/use-cases/update-stock-threshold.use-case';
 
 @Controller('inventory')
+@UseGuards(BranchScopeGuard)
 export class InventoryController {
   constructor(
     private readonly registerMovement: RegisterStockMovementUseCase,

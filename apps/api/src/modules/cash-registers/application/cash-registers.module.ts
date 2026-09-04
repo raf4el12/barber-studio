@@ -6,8 +6,10 @@ import { OpenCashRegisterUseCase } from './use-cases/open-cash-register.use-case
 import { CloseCashRegisterUseCase } from './use-cases/close-cash-register.use-case';
 import { GetActiveCashRegisterUseCase } from './use-cases/get-active-cash-register.use-case';
 import { ListCashRegistersUseCase } from './use-cases/list-cash-registers.use-case';
+import { AuditModule } from '../../audit/application/audit.module';
 
 @Module({
+  imports: [AuditModule],
   controllers: [CashRegistersController],
   providers: [
     {

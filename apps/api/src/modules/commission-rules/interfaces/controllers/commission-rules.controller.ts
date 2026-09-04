@@ -11,6 +11,10 @@ import {
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { Roles } from '../../../../common/decorators/roles.decorator';
+import {
+  CurrentUser,
+  type AuthUser,
+} from '../../../../common/decorators/current-user.decorator';
 import { CreateCommissionRuleDto } from '../../application/dto/create-commission-rule.dto';
 import { UpdateCommissionRuleDto } from '../../application/dto/update-commission-rule.dto';
 import { PreviewCommissionDto } from '../../application/dto/preview-commission.dto';
@@ -40,8 +44,8 @@ export class CommissionRulesController {
   }
 
   @Post()
-  create(@Body() dto: CreateCommissionRuleDto) {
-    return this.createRule.execute(dto);
+  create(@Body() dto: CreateCommissionRuleDto, @CurrentUser() user: AuthUser) {
+    return this.createRule.execute(dto, user.id);
   }
 
   @Get()
@@ -55,13 +59,17 @@ export class CommissionRulesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateCommissionRuleDto) {
-    return this.updateRule.execute(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateCommissionRuleDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.updateRule.execute(id, dto, user.id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.deleteRule.execute(id);
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    return this.deleteRule.execute(id, user.id);
   }
 }

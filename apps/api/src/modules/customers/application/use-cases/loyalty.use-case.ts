@@ -9,6 +9,8 @@ import {
   type ICustomerRepository,
 } from '../../domain/repositories/customer.repository';
 import { GetSettingUseCase } from '../../../settings/application/use-cases/get-setting.use-case';
+import { WriteAuditLogUseCase } from '../../../audit/application/use-cases/write-audit-log.use-case';
+import { AuditAction } from '../../../audit/domain/constants/audit-actions';
 
 export const LOYALTY_POINTS_PER_CURRENCY_KEY = 'loyalty_points_per_currency';
 
@@ -64,9 +66,10 @@ export class RedeemLoyaltyUseCase {
   constructor(
     @Inject(CUSTOMER_REPOSITORY)
     private readonly customers: ICustomerRepository,
+    private readonly audit: WriteAuditLogUseCase,
   ) {}
 
-  async execute(customerId: string, points: number, reason: string) {
+  async execute(customerId: string, points: number, reason: string, userId?: string) {
     if (!Number.isInteger(points) || points <= 0) {
       throw new BadRequestException(
         'Los puntos a canjear deben ser un entero mayor a cero',
@@ -85,11 +88,19 @@ export class RedeemLoyaltyUseCase {
         `Saldo insuficiente: disponible ${balance}`,
       );
     }
-    const { transaction } = await this.customers.addTransaction({
+    const { transaction, balance: balanceAfter } = await this.customers.addTransaction({
       customerId,
       points: -points,
       reason: reason.trim(),
       ticketId: null,
+    });
+    await this.audit.execute({
+      userId,
+      branchId: customer.branchId,
+      action: AuditAction.LOYALTY_REDEEMED,
+      entityType: 'Customer',
+      entityId: customerId,
+      metadata: { points, reason: reason.trim(), balanceAfter },
     });
     return transaction;
   }

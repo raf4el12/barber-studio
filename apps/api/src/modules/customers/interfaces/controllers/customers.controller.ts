@@ -9,8 +9,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { BranchScopeGuard } from '../../../../common/guards/branch-scope.guard';
 import {
   CurrentUser,
   type AuthUser,
@@ -32,6 +34,7 @@ import { RedeemLoyaltyUseCase } from '../../application/use-cases/loyalty.use-ca
 
 @Controller('customers')
 @Roles(Role.OWNER, Role.CASHIER)
+@UseGuards(BranchScopeGuard)
 export class CustomersController {
   constructor(
     private readonly createCustomer: CreateCustomerUseCase,
@@ -88,7 +91,11 @@ export class CustomersController {
   }
 
   @Post(':id/loyalty/redeem')
-  redeem(@Param('id') id: string, @Body() dto: RedeemLoyaltyDto) {
-    return this.redeemLoyalty.execute(id, dto.points, dto.reason);
+  redeem(
+    @Param('id') id: string,
+    @Body() dto: RedeemLoyaltyDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.redeemLoyalty.execute(id, dto.points, dto.reason, user.id);
   }
 }

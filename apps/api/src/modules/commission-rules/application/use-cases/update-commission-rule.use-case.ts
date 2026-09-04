@@ -10,15 +10,19 @@ import {
 } from '../../domain/repositories/commission-rule.repository';
 import type { UpdateCommissionRuleData } from '../../domain/interfaces/commission-rule-data.interface';
 import { UpdateCommissionRuleDto } from '../dto/update-commission-rule.dto';
+import { WriteAuditLogUseCase } from '../../../audit/application/use-cases/write-audit-log.use-case';
+import { AuditAction } from '../../../audit/domain/constants/audit-actions';
+import { ruleSnapshot } from './commission-rule-audit';
 
 @Injectable()
 export class UpdateCommissionRuleUseCase {
   constructor(
     @Inject(COMMISSION_RULE_REPOSITORY)
     private readonly rules: ICommissionRuleRepository,
+    private readonly audit: WriteAuditLogUseCase,
   ) {}
 
-  async execute(id: string, dto: UpdateCommissionRuleDto) {
+  async execute(id: string, dto: UpdateCommissionRuleDto, userId?: string) {
     const existing = await this.rules.findById(id);
     if (!existing) {
       throw new NotFoundException(`Regla de comisión no encontrada: ${id}`);
@@ -46,7 +50,20 @@ export class UpdateCommissionRuleUseCase {
         'Una regla de producto no puede combinarse con ámbito de servicio o categoría',
       );
     }
-    return this.rules.update(id, data);
+    const updated = await this.rules.update(id, data);
+    await this.audit.execute({
+      userId,
+      branchId: updated.branchId,
+      action: AuditAction.COMMISSION_RULE_CHANGED,
+      entityType: 'CommissionRule',
+      entityId: id,
+      metadata: {
+        operation: 'update',
+        before: ruleSnapshot(existing),
+        after: ruleSnapshot(updated),
+      },
+    });
+    return updated;
   }
 
   private normalize(dto: UpdateCommissionRuleDto): UpdateCommissionRuleData {

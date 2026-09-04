@@ -12,9 +12,10 @@ import { PreviewCommissionUseCase } from './use-cases/preview-commission.use-cas
 import { SettingsModule } from '../../settings/application/settings.module';
 import { UsersModule } from '../../users/application/users.module';
 import { ServicesModule } from '../../services/application/services.module';
+import { AuditModule } from '../../audit/application/audit.module';
 
 @Module({
-  imports: [SettingsModule, UsersModule, ServicesModule],
+  imports: [SettingsModule, UsersModule, ServicesModule, AuditModule],
   controllers: [CommissionRulesController],
   providers: [
     {

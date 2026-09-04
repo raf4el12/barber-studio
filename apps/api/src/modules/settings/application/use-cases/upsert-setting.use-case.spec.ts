@@ -3,12 +3,17 @@ import { UpsertSettingUseCase } from './upsert-setting.use-case';
 import type { ISettingRepository } from '../../domain/repositories/setting.repository';
 
 describe('UpsertSettingUseCase', () => {
-  let repo: jest.Mocked<Pick<ISettingRepository, 'upsert'>>;
+  let repo: jest.Mocked<Pick<ISettingRepository, 'upsert' | 'findByKey'>>;
+  let audit: { execute: jest.Mock };
   let useCase: UpsertSettingUseCase;
 
   beforeEach(() => {
-    repo = { upsert: jest.fn() };
-    useCase = new UpsertSettingUseCase(repo as unknown as ISettingRepository);
+    repo = {
+      upsert: jest.fn().mockImplementation((data: object) => Promise.resolve({ id: 's-1', ...data })),
+      findByKey: jest.fn().mockResolvedValue(null),
+    };
+    audit = { execute: jest.fn().mockResolvedValue(undefined) };
+    useCase = new UpsertSettingUseCase(repo as unknown as ISettingRepository, audit as never);
   });
 
   it('normaliza branchId ausente a null (global)', async () => {
@@ -38,5 +43,24 @@ describe('UpsertSettingUseCase', () => {
       BadRequestException,
     );
     expect(repo.upsert).not.toHaveBeenCalled();
+  });
+
+  it('audita before/after del cambio', async () => {
+    repo.findByKey.mockResolvedValue({
+      id: 's-1',
+      key: 'tax_rate',
+      value: '18',
+      branchId: null,
+      updatedAt: new Date(),
+    });
+    await useCase.execute({ key: 'tax_rate', value: '19' }, 'owner-1');
+    expect(audit.execute).toHaveBeenCalledWith({
+      userId: 'owner-1',
+      branchId: null,
+      action: 'SETTING_CHANGED',
+      entityType: 'Setting',
+      entityId: 's-1',
+      metadata: { key: 'tax_rate', before: '18', after: '19' },
+    });
   });
 });

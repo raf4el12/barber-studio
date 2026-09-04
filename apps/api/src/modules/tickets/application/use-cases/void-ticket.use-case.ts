@@ -18,6 +18,8 @@ import {
   INVENTORY_REPOSITORY,
   type IInventoryRepository,
 } from '../../../inventory/domain/repositories/inventory.repository';
+import { WriteAuditLogUseCase } from '../../../audit/application/use-cases/write-audit-log.use-case';
+import { AuditAction } from '../../../audit/domain/constants/audit-actions';
 
 @Injectable()
 export class VoidTicketUseCase {
@@ -26,6 +28,7 @@ export class VoidTicketUseCase {
     @Inject(INVENTORY_REPOSITORY)
     private readonly inventory: IInventoryRepository,
     @Inject(TICKET_EVENTS) private readonly events: ITicketEvents,
+    private readonly audit: WriteAuditLogUseCase,
   ) {}
 
   async execute(ticketId: string, userId: string, scopeBranchId?: string) {
@@ -58,6 +61,18 @@ export class VoidTicketUseCase {
       }
     }
     await this.events.emitTicketVoided(ticket.branchId, ticketId);
+    await this.audit.execute({
+      userId,
+      branchId: ticket.branchId,
+      action: AuditAction.TICKET_VOIDED,
+      entityType: 'Ticket',
+      entityId: ticketId,
+      metadata: {
+        code: ticket.code,
+        statusBefore: ticket.status,
+        total: ticket.total,
+      },
+    });
     return updated;
   }
 }

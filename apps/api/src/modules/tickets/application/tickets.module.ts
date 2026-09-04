@@ -20,6 +20,7 @@ import { PaymentMethodsModule } from '../../payment-methods/application/payment-
 import { CashRegistersModule } from '../../cash-registers/application/cash-registers.module';
 import { QueueModule } from '../../queue/application/queue.module';
 import { CustomersModule } from '../../customers/application/customers.module';
+import { AuditModule } from '../../audit/application/audit.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CustomersModule } from '../../customers/application/customers.module';
     CashRegistersModule,
     forwardRef(() => QueueModule),
     forwardRef(() => CustomersModule),
+    AuditModule,
   ],
   controllers: [TicketsController],
   providers: [

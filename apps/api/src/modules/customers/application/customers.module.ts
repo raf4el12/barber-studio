@@ -17,9 +17,10 @@ import {
 } from './use-cases/loyalty.use-case';
 import { SettingsModule } from '../../settings/application/settings.module';
 import { TicketsModule } from '../../tickets/application/tickets.module';
+import { AuditModule } from '../../audit/application/audit.module';
 
 @Module({
-  imports: [SettingsModule, forwardRef(() => TicketsModule)],
+  imports: [SettingsModule, forwardRef(() => TicketsModule), AuditModule],
   controllers: [CustomersController],
   providers: [
     { provide: CUSTOMER_REPOSITORY, useClass: PrismaCustomerRepository },

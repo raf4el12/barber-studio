@@ -5,8 +5,10 @@ import { SettingsController } from '../interfaces/controllers/settings.controlle
 import { GetSettingUseCase } from './use-cases/get-setting.use-case';
 import { ListSettingsUseCase } from './use-cases/list-settings.use-case';
 import { UpsertSettingUseCase } from './use-cases/upsert-setting.use-case';
+import { AuditModule } from '../../audit/application/audit.module';
 
 @Module({
+  imports: [AuditModule],
   controllers: [SettingsController],
   providers: [
     { provide: SETTING_REPOSITORY, useClass: PrismaSettingRepository },

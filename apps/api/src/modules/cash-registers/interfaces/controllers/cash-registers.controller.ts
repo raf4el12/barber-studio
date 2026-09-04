@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { BranchScopeGuard } from '../../../../common/guards/branch-scope.guard';
 import {
   CurrentUser,
   type AuthUser,
@@ -20,6 +21,7 @@ function scopedBranch(user: AuthUser, explicit?: string): string {
 
 @Controller('cash-registers')
 @Roles(Role.OWNER, Role.CASHIER)
+@UseGuards(BranchScopeGuard)
 export class CashRegistersController {
   constructor(
     private readonly openRegister: OpenCashRegisterUseCase,

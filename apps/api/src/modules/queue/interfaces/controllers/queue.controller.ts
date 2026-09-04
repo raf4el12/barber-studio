@@ -8,6 +8,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { QueueStatus, Role } from '@prisma/client';
+import { UseGuards } from '@nestjs/common';
+import { BranchScopeGuard } from '../../../../common/guards/branch-scope.guard';
 import {
   CurrentUser,
   type AuthUser,
@@ -29,6 +31,7 @@ function scopedBranch(user: AuthUser, queryBranchId?: string): string {
 
 @Controller('queue')
 @Roles(Role.OWNER, Role.CASHIER, Role.BARBER)
+@UseGuards(BranchScopeGuard)
 export class QueueController {
   constructor(
     private readonly createEntry: CreateQueueEntryUseCase,

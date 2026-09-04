@@ -9,12 +9,15 @@ import {
   type IInventoryRepository,
 } from '../../domain/repositories/inventory.repository';
 import { RegisterStockMovementDto } from '../dto/register-stock-movement.dto';
+import { WriteAuditLogUseCase } from '../../../audit/application/use-cases/write-audit-log.use-case';
+import { AuditAction } from '../../../audit/domain/constants/audit-actions';
 
 @Injectable()
 export class RegisterStockMovementUseCase {
   constructor(
     @Inject(INVENTORY_REPOSITORY)
     private readonly inventory: IInventoryRepository,
+    private readonly audit: WriteAuditLogUseCase,
   ) {}
 
   async execute(
@@ -58,7 +61,7 @@ export class RegisterStockMovementUseCase {
       }
     }
 
-    return this.inventory.registerMovement({
+    const result = await this.inventory.registerMovement({
       branchId,
       productId: dto.productId,
       type: dto.type,
@@ -66,5 +69,19 @@ export class RegisterStockMovementUseCase {
       reference: dto.reference,
       createdById: userId,
     });
+    if (dto.type === StockMovementType.ADJUSTMENT) {
+      await this.audit.execute({
+        userId,
+        branchId,
+        action: AuditAction.STOCK_ADJUSTED,
+        entityType: 'Product',
+        entityId: dto.productId,
+        metadata: {
+          quantity: normalizedQuantity,
+          reference: dto.reference ?? null,
+        },
+      });
+    }
+    return result;
   }
 }
