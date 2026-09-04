@@ -14,11 +14,12 @@ import {
 } from '../../domain/repositories/queue.repository';
 import type { IQueueEvents } from '../../domain/repositories/queue-events.repository';
 import type { JwtPayload } from '../../../../auth/jwt.strategy';
+import { branchRoom } from '../../../../common/realtime/branch-room';
 
 export const QUEUE_ROOM_PREFIX = 'branch:';
 
 export function queueRoom(branchId: string): string {
-  return `${QUEUE_ROOM_PREFIX}${branchId}`;
+  return branchRoom(branchId);
 }
 
 function unknownField(source: unknown, key: string): unknown {

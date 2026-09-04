@@ -24,12 +24,16 @@ function setup() {
   const queue = { countCompletedByBarberSince: jest.fn().mockResolvedValue(7) };
   const shift = { findOpenRegister: jest.fn().mockResolvedValue(null) };
   const users = { findById: jest.fn().mockResolvedValue(barber()) };
+  const tickets = {
+    sumPaidCommissionsByBarberSince: jest.fn().mockResolvedValue(22),
+  };
   const useCase = new GetMyPerformanceUseCase(
     queue as unknown as IQueueRepository,
     shift,
     users as unknown as IUserRepository,
+    tickets as never,
   );
-  return { queue, shift, users, useCase };
+  return { queue, shift, users, tickets, useCase };
 }
 
 describe('GetMyPerformanceUseCase', () => {
@@ -49,7 +53,7 @@ describe('GetMyPerformanceUseCase', () => {
       branchId: 'branch-1',
       shiftStartedAt: startOfDay,
       completedServices: 7,
-      estimatedCommission: 0,
+      estimatedCommission: 22,
       commissionCurrency: 'PEN',
     });
   });

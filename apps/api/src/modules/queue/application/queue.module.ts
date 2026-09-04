@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { QUEUE_REPOSITORY } from '../domain/repositories/queue.repository';
 import { QUEUE_EVENTS } from '../domain/repositories/queue-events.repository';
 import { SHIFT_REPOSITORY } from '../domain/repositories/shift.repository';
@@ -14,9 +14,10 @@ import { ChangeQueueStatusUseCase } from './use-cases/change-queue-status.use-ca
 import { GetMyPerformanceUseCase } from './use-cases/get-my-performance.use-case';
 import { AuthModule } from '../../../auth/auth.module';
 import { UsersModule } from '../../users/application/users.module';
+import { TicketsModule } from '../../tickets/application/tickets.module';
 
 @Module({
-  imports: [AuthModule, UsersModule],
+  imports: [AuthModule, UsersModule, forwardRef(() => TicketsModule)],
   controllers: [QueueController, MeController],
   providers: [
     { provide: QUEUE_REPOSITORY, useClass: PrismaQueueRepository },

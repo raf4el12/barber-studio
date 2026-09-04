@@ -16,13 +16,17 @@ import {
   USER_REPOSITORY,
   type IUserRepository,
 } from '../../../users/domain/repositories/user.repository';
+import {
+  TICKET_REPOSITORY,
+  type ITicketRepository,
+} from '../../../tickets/domain/repositories/ticket.repository';
 
 export interface MyPerformance {
   barberId: string;
   branchId: string;
   shiftStartedAt: Date;
   completedServices: number;
-  /** Placeholder hasta Fase 4: se conecta al CommissionResolverService. */
+  /** Suma de commissionAmount congelado en tickets PAID del turno. */
   estimatedCommission: number;
   commissionCurrency: string;
 }
@@ -39,6 +43,7 @@ export class GetMyPerformanceUseCase {
     @Inject(QUEUE_REPOSITORY) private readonly queue: IQueueRepository,
     @Inject(SHIFT_REPOSITORY) private readonly shift: IShiftRepository,
     @Inject(USER_REPOSITORY) private readonly users: IUserRepository,
+    @Inject(TICKET_REPOSITORY) private readonly tickets: ITicketRepository,
   ) {}
 
   async execute(barberId: string, branchId?: string): Promise<MyPerformance> {
@@ -59,12 +64,18 @@ export class GetMyPerformanceUseCase {
       effectiveBranch,
       shiftStartedAt,
     );
+    const estimatedCommission =
+      await this.tickets.sumPaidCommissionsByBarberSince(
+        barberId,
+        effectiveBranch,
+        shiftStartedAt,
+      );
     return {
       barberId,
       branchId: effectiveBranch,
       shiftStartedAt,
       completedServices,
-      estimatedCommission: 0,
+      estimatedCommission,
       commissionCurrency: 'PEN',
     };
   }
