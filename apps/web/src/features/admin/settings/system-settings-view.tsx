@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sliders,
   Building2,
@@ -23,7 +23,6 @@ interface SystemSettingsViewProps {
 
 export function SystemSettingsView({ branches }: SystemSettingsViewProps) {
   const [selectedBranchId, setSelectedBranchId] = useState<string>(''); // '' = Global
-  const [settings, setSettings] = useState<Setting[]>([]);
   const [loadedScope, setLoadedScope] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,7 +72,6 @@ export function SystemSettingsView({ branches }: SystemSettingsViewProps) {
       .list(selectedBranchId || undefined)
       .then((data) => {
         if (!ignore) {
-          setSettings(data);
           populateForm(data);
           setError(null);
           setLoadedScope(scope);
