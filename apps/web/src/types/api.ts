@@ -62,6 +62,7 @@ export interface ServiceCategory {
 export interface Service {
   id: string;
   name: string;
+  description?: string | null;
   price: number | string;
   durationMinutes?: number | null;
   categoryId: string;
@@ -73,9 +74,87 @@ export interface Product {
   id: string;
   name: string;
   sku?: string | null;
+  description?: string | null;
   price: number | string;
   cost?: number | string | null;
   isActive: boolean;
+}
+
+export interface CreateServiceDto {
+  name: string;
+  description?: string;
+  durationMinutes?: number;
+  price: number;
+  categoryId: string;
+}
+
+export interface UpdateServiceDto {
+  name?: string;
+  description?: string;
+  durationMinutes?: number;
+  price?: number;
+  categoryId?: string;
+  isActive?: boolean;
+}
+
+export interface CreateServiceCategoryDto {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateServiceCategoryDto {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface CreateProductDto {
+  sku?: string;
+  name: string;
+  description?: string;
+  price: number;
+  cost?: number;
+}
+
+export interface UpdateProductDto {
+  sku?: string;
+  name?: string;
+  description?: string;
+  price?: number;
+  cost?: number;
+  isActive?: boolean;
+}
+
+export type StockMovementType =
+  | 'PURCHASE'
+  | 'SALE'
+  | 'ADJUSTMENT'
+  | 'TRANSFER_IN'
+  | 'TRANSFER_OUT'
+  | 'RETURN';
+
+export interface RegisterStockMovementDto {
+  productId: string;
+  branchId?: string;
+  type: StockMovementType;
+  quantity: number;
+  reference?: string;
+}
+
+export interface UpdateStockThresholdDto {
+  productId: string;
+  branchId?: string;
+  lowStockThreshold: number;
+}
+
+export interface InventoryItem {
+  id: string;
+  branchId: string;
+  productId: string;
+  quantity: number;
+  lowStockThreshold: number;
+  updatedAt: string;
+  product?: Product;
 }
 
 export interface CreateTicketItemDto {

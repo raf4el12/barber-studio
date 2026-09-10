@@ -15,6 +15,15 @@ import type {
   CloseCashRegisterDto,
   PaymentMethod,
   AddPaymentDto,
+  CreateServiceDto,
+  UpdateServiceDto,
+  CreateServiceCategoryDto,
+  UpdateServiceCategoryDto,
+  CreateProductDto,
+  UpdateProductDto,
+  RegisterStockMovementDto,
+  UpdateStockThresholdDto,
+  InventoryItem,
 } from '@/types/api';
 
 const API_BASE =
@@ -132,9 +141,84 @@ export const api = {
   },
 
   catalog: {
-    getServices: () => request<Service[]>('/services'),
+    getServices: (categoryId?: string) => {
+      const q = categoryId ? `?categoryId=${encodeURIComponent(categoryId)}` : '';
+      return request<Service[]>(`/services${q}`);
+    },
+    getService: (id: string) => request<Service>(`/services/${id}`),
+    createService: (dto: CreateServiceDto) =>
+      request<Service>('/services', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    updateService: (id: string, dto: UpdateServiceDto) =>
+      request<Service>(`/services/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    deleteService: (id: string) =>
+      request<void>(`/services/${id}`, {
+        method: 'DELETE',
+      }),
+
     getCategories: () => request<ServiceCategory[]>('/service-categories'),
+    getCategory: (id: string) => request<ServiceCategory>(`/service-categories/${id}`),
+    createCategory: (dto: CreateServiceCategoryDto) =>
+      request<ServiceCategory>('/service-categories', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    updateCategory: (id: string, dto: UpdateServiceCategoryDto) =>
+      request<ServiceCategory>(`/service-categories/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    deleteCategory: (id: string) =>
+      request<void>(`/service-categories/${id}`, {
+        method: 'DELETE',
+      }),
+
     getProducts: () => request<Product[]>('/products'),
+  },
+
+  products: {
+    list: () => request<Product[]>('/products'),
+    getById: (id: string) => request<Product>(`/products/${id}`),
+    create: (dto: CreateProductDto) =>
+      request<Product>('/products', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    update: (id: string, dto: UpdateProductDto) =>
+      request<Product>(`/products/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    delete: (id: string) =>
+      request<void>(`/products/${id}`, {
+        method: 'DELETE',
+      }),
+  },
+
+  inventory: {
+    list: (branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<InventoryItem[]>(`/inventory${q}`);
+    },
+    listLowStock: (branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<InventoryItem[]>(`/inventory/low-stock${q}`);
+    },
+    registerMovement: (dto: RegisterStockMovementDto) =>
+      request<unknown>('/inventory/movements', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    updateThreshold: (dto: UpdateStockThresholdDto) =>
+      request<InventoryItem>('/inventory/threshold', {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
   },
 
   tickets: {
