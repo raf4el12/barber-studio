@@ -44,6 +44,7 @@ graph TD
 | **8** | Frontend — Portal del Barbero | App Next.js 16, cola reactiva, creación de tickets, widget de rendimiento | 3, 4 | [08-frontend-barber-portal](modules/08-frontend-barber-portal.md) |
 | **9** | Frontend — Estación POS y Caja | Estación POS, apertura/cierre de caja, pago dividido, propinas y vuelto | 4, 8 | [09-frontend-pos-station](modules/09-frontend-pos-station.md) |
 | **10** | Frontend — Backoffice Catálogo e Inventario | Gestión de servicios, categorías, productos retail, stock por sucursal y movimientos | 1, 9 | [10-frontend-admin-catalog-inventory](modules/10-frontend-admin-catalog-inventory.md) |
+| **11** | Frontend — Personal, Sedes y Comisiones | Cuentas de equipo, gestión de sedes, motor jerárquico de comisiones y simulador | 2, 10 | [11-frontend-admin-staff-commissions](modules/11-frontend-admin-staff-commissions.md) |
 
 ---
 
