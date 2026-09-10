@@ -1,6 +1,7 @@
 import { NotFoundException, ConflictException } from '@nestjs/common';
 import { UpdateProductUseCase } from './update-product.use-case';
 import type { IProductRepository } from '../../domain/repositories/product.repository';
+import type { ProductEntity } from '../../domain/entities/product.entity';
 
 describe('UpdateProductUseCase', () => {
   let repo: jest.Mocked<
@@ -24,7 +25,10 @@ describe('UpdateProductUseCase', () => {
   });
 
   it('throws ConflictException when updating to an already used SKU', async () => {
-    repo.findById.mockResolvedValue({ id: 'p1', sku: 'OLD-SKU' } as any);
+    repo.findById.mockResolvedValue({
+      id: 'p1',
+      sku: 'OLD-SKU',
+    } as unknown as ProductEntity);
     repo.existsBySku.mockResolvedValue(true);
     await expect(useCase.execute('p1', { sku: 'TAKEN-SKU' })).rejects.toThrow(
       ConflictException,
@@ -32,7 +36,10 @@ describe('UpdateProductUseCase', () => {
   });
 
   it('updates product successfully', async () => {
-    repo.findById.mockResolvedValue({ id: 'p1', sku: 'OLD-SKU' } as any);
+    repo.findById.mockResolvedValue({
+      id: 'p1',
+      sku: 'OLD-SKU',
+    } as unknown as ProductEntity);
     await useCase.execute('p1', { price: 45 });
     expect(repo.update).toHaveBeenCalledWith('p1', { price: 45 });
   });

@@ -9,11 +9,18 @@ describe('UpsertSettingUseCase', () => {
 
   beforeEach(() => {
     repo = {
-      upsert: jest.fn().mockImplementation((data: object) => Promise.resolve({ id: 's-1', ...data })),
+      upsert: jest
+        .fn()
+        .mockImplementation((data: object) =>
+          Promise.resolve({ id: 's-1', ...data }),
+        ),
       findByKey: jest.fn().mockResolvedValue(null),
     };
     audit = { execute: jest.fn().mockResolvedValue(undefined) };
-    useCase = new UpsertSettingUseCase(repo as unknown as ISettingRepository, audit as never);
+    useCase = new UpsertSettingUseCase(
+      repo as unknown as ISettingRepository,
+      audit as never,
+    );
   });
 
   it('normaliza branchId ausente a null (global)', async () => {

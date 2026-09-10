@@ -7,6 +7,7 @@ import type { IPasswordHasher } from '../../domain/contracts/password-hasher.int
 describe('CreateUserUseCase', () => {
   let users: jest.Mocked<Pick<IUserRepository, 'existsByEmail' | 'create'>>;
   let hasher: jest.Mocked<IPasswordHasher>;
+  let hashMock: jest.Mock;
   let useCase: CreateUserUseCase;
 
   const dto = {
@@ -18,9 +19,13 @@ describe('CreateUserUseCase', () => {
   };
 
   beforeEach(() => {
-    users = { existsByEmail: jest.fn().mockResolvedValue(false), create: jest.fn() };
+    users = {
+      existsByEmail: jest.fn().mockResolvedValue(false),
+      create: jest.fn(),
+    };
+    hashMock = jest.fn().mockResolvedValue('HASHED');
     hasher = {
-      hash: jest.fn().mockResolvedValue('HASHED'),
+      hash: hashMock,
       compare: jest.fn(),
     };
     useCase = new CreateUserUseCase(
@@ -37,7 +42,7 @@ describe('CreateUserUseCase', () => {
 
   it('hashes the password and never passes the plaintext to the repo', async () => {
     await useCase.execute(dto);
-    expect(hasher.hash).toHaveBeenCalledWith('password123');
+    expect(hashMock).toHaveBeenCalledWith('password123');
     expect(users.create).toHaveBeenCalledWith({
       name: 'Barbero',
       email: 'b@x.com',

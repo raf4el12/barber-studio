@@ -13,10 +13,7 @@ describe('UpdateStockThresholdUseCase', () => {
   });
 
   it('updates the low stock threshold for a product in a branch', async () => {
-    await useCase.execute(
-      { productId: 'p1', lowStockThreshold: 5 },
-      'b1',
-    );
+    await useCase.execute({ productId: 'p1', lowStockThreshold: 5 }, 'b1');
     expect(repo.updateThreshold).toHaveBeenCalledWith('b1', 'p1', 5);
   });
 });

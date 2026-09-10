@@ -41,7 +41,9 @@ describe('UpdateUserUseCase', () => {
   it('lanza NotFound cuando no existe', async () => {
     const { repo, useCase } = setup();
     repo.findById.mockResolvedValue(null);
-    await expect(useCase.execute('missing', {})).rejects.toThrow(NotFoundException);
+    await expect(useCase.execute('missing', {})).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('audita cambio de rol con before/after', async () => {

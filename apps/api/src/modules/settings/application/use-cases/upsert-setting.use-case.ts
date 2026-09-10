@@ -21,7 +21,11 @@ export class UpsertSettingUseCase {
     const key = dto.key.trim();
     const branchId = dto.branchId ?? null;
     const before = await this.settings.findByKey(key, branchId);
-    const saved = await this.settings.upsert({ key, value: dto.value, branchId });
+    const saved = await this.settings.upsert({
+      key,
+      value: dto.value,
+      branchId,
+    });
     await this.audit.execute({
       userId,
       branchId,

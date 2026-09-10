@@ -69,7 +69,12 @@ export class RedeemLoyaltyUseCase {
     private readonly audit: WriteAuditLogUseCase,
   ) {}
 
-  async execute(customerId: string, points: number, reason: string, userId?: string) {
+  async execute(
+    customerId: string,
+    points: number,
+    reason: string,
+    userId?: string,
+  ) {
     if (!Number.isInteger(points) || points <= 0) {
       throw new BadRequestException(
         'Los puntos a canjear deben ser un entero mayor a cero',
@@ -88,12 +93,13 @@ export class RedeemLoyaltyUseCase {
         `Saldo insuficiente: disponible ${balance}`,
       );
     }
-    const { transaction, balance: balanceAfter } = await this.customers.addTransaction({
-      customerId,
-      points: -points,
-      reason: reason.trim(),
-      ticketId: null,
-    });
+    const { transaction, balance: balanceAfter } =
+      await this.customers.addTransaction({
+        customerId,
+        points: -points,
+        reason: reason.trim(),
+        ticketId: null,
+      });
     await this.audit.execute({
       userId,
       branchId: customer.branchId,
