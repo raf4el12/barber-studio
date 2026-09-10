@@ -7,8 +7,14 @@ import type {
   Service,
   ServiceCategory,
   Ticket,
+  TicketDetail,
   User,
   Branch,
+  CashRegister,
+  OpenCashRegisterDto,
+  CloseCashRegisterDto,
+  PaymentMethod,
+  AddPaymentDto,
 } from '@/types/api';
 
 const API_BASE =
@@ -137,6 +143,61 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(dto),
       }),
+    list: (params?: {
+      branchId?: string;
+      status?: 'OPEN' | 'PARTIALLY_PAID' | 'PAID' | 'VOIDED';
+      barberId?: string;
+    }) => {
+      const query = new URLSearchParams();
+      if (params?.branchId) query.set('branchId', params.branchId);
+      if (params?.status) query.set('status', params.status);
+      if (params?.barberId) query.set('barberId', params.barberId);
+      const q = query.toString();
+      return request<Ticket[]>(`/tickets${q ? `?${q}` : ''}`);
+    },
+    getById: (id: string) => request<TicketDetail>(`/tickets/${id}`),
+    addPayment: (id: string, dto: AddPaymentDto) =>
+      request<TicketDetail>(`/tickets/${id}/payments`, {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    applyDiscount: (id: string, discountAmount: number) =>
+      request<TicketDetail>(`/tickets/${id}/discount`, {
+        method: 'PATCH',
+        body: JSON.stringify({ discountAmount }),
+      }),
+    void: (id: string) =>
+      request<TicketDetail>(`/tickets/${id}/void`, {
+        method: 'POST',
+      }),
+  },
+
+  cashRegisters: {
+    getActive: (branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<CashRegister | null>(`/cash-registers/active${q}`);
+    },
+    open: (dto: OpenCashRegisterDto) =>
+      request<CashRegister>('/cash-registers/open', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    close: (id: string, dto: CloseCashRegisterDto) =>
+      request<CashRegister>(`/cash-registers/${id}/close`, {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    list: (branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<CashRegister[]>(`/cash-registers${q}`);
+    },
+  },
+
+  paymentMethods: {
+    list: (isActive = true) => {
+      const q = isActive !== undefined ? `?isActive=${isActive}` : '';
+      return request<PaymentMethod[]>(`/payment-methods${q}`);
+    },
   },
 
   branches: {

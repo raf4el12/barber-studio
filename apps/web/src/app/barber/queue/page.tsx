@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useQueueRealtime } from '@/lib/realtime/use-queue-realtime';
 import { api } from '@/lib/api/client';
@@ -11,7 +12,7 @@ import { ActiveTurnCard } from '@/features/barber-portal/active-turn-card';
 import { QueueBoard } from '@/features/barber-portal/queue-board';
 import { AddWalkinModal } from '@/features/barber-portal/add-walkin-modal';
 import { CreateTicketModal } from '@/features/barber-portal/create-ticket-modal';
-import { Scissors, LogOut, Radio, Loader2, Building2 } from 'lucide-react';
+import { Scissors, LogOut, Radio, Loader2, Building2, DollarSign } from 'lucide-react';
 
 export default function BarberQueuePage() {
   const router = useRouter();
@@ -111,6 +112,16 @@ export default function BarberQueuePage() {
                 {isConnected ? 'En Vivo' : 'Conectando'}
               </span>
             </div>
+
+            {(user?.role === 'OWNER' || user?.role === 'CASHIER') && (
+              <Link
+                href="/pos"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium border border-zinc-700 transition"
+              >
+                <DollarSign className="h-3.5 w-3.5 text-amber-400" />
+                <span className="hidden sm:inline">POS / Caja</span>
+              </Link>
+            )}
 
             <button
               onClick={logout}

@@ -96,7 +96,9 @@ export interface CreateTicketDto {
 
 export interface TicketItem {
   id: string;
-  type: 'SERVICE' | 'PRODUCT';
+  itemType?: 'SERVICE' | 'PRODUCT';
+  type?: 'SERVICE' | 'PRODUCT';
+  description?: string;
   serviceId?: string | null;
   service?: Service | null;
   productId?: string | null;
@@ -114,16 +116,76 @@ export interface TicketItem {
 
 export interface Ticket {
   id: string;
-  correlativeNumber: string;
+  code: string;
+  correlativeNumber?: string;
   branchId: string;
   customerId?: string | null;
   barberId: string;
+  queueEntryId?: string | null;
   status: 'OPEN' | 'PARTIALLY_PAID' | 'PAID' | 'VOIDED';
   subtotal: string | number;
   discountAmount: string | number;
   taxAmount: string | number;
   tipAmount: string | number;
   total: string | number;
-  items: TicketItem[];
+  items?: TicketItem[];
+  createdAt: string;
+  paidAt?: string | null;
+  voidedAt?: string | null;
+}
+
+export interface PaymentMethod {
+  id: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+}
+
+export interface Payment {
+  id: string;
+  ticketId: string;
+  paymentMethodId: string;
+  methodCode: string;
+  methodName: string;
+  amount: number;
+  cashierId: string;
+  cashRegisterId?: string | null;
   createdAt: string;
 }
+
+export interface AddPaymentDto {
+  paymentMethodId: string;
+  amount: number;
+  tipAmount?: number;
+}
+
+export interface TicketDetail extends Ticket {
+  items: TicketItem[];
+  payments: Payment[];
+  amountPaid: number;
+  amountDue: number;
+}
+
+export interface CashRegister {
+  id: string;
+  branchId: string;
+  openedById: string;
+  openingAmount: number;
+  openedAt: string;
+  closedById?: string | null;
+  closingCountedCash?: number | null;
+  closedAt?: string | null;
+  notes?: string | null;
+}
+
+export interface OpenCashRegisterDto {
+  branchId?: string;
+  openingAmount: number;
+  notes?: string;
+}
+
+export interface CloseCashRegisterDto {
+  closingCountedCash: number;
+  notes?: string;
+}
+
