@@ -47,6 +47,7 @@ graph TD
 | **11** | Frontend — Personal, Sedes y Comisiones | Cuentas de equipo, gestión de sedes, motor jerárquico de comisiones y simulador | 2, 10 | [11-frontend-admin-staff-commissions](modules/11-frontend-admin-staff-commissions.md) |
 | **12** | Frontend — Clientes y Fidelización | Directorio unificado, libro mayor de puntos, canje en tiempo real e historial | 5, 11 | [12-frontend-admin-customers-loyalty](modules/12-frontend-admin-customers-loyalty.md) |
 | **13** | Frontend — Reportes y Analítica | Arqueo Z-Report imprimible, liquidación de personal y analítica de negocio | 6, 12 | [13-frontend-admin-reports-analytics](modules/13-frontend-admin-reports-analytics.md) |
+| **14** | Frontend — Configuración y Auditoría | Parámetros tributarios/comisiones (global y sedes) y pista inmutable de auditoría | 7, 13 | [14-frontend-admin-settings-audit](modules/14-frontend-admin-settings-audit.md) |
 
 ---
 
