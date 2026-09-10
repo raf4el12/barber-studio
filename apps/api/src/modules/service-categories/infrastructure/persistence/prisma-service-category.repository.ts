@@ -12,14 +12,14 @@ import type {
 import { ServiceCategoryEntity } from '../../domain/entities/service-category.entity';
 
 @Injectable()
-export class PrismaServiceCategoryRepository
-  implements IServiceCategoryRepository
-{
+export class PrismaServiceCategoryRepository implements IServiceCategoryRepository {
   constructor(
     @Inject(EXTENDED_PRISMA) private readonly prisma: ExtendedPrismaService,
   ) {}
 
-  async create(data: CreateServiceCategoryData): Promise<ServiceCategoryEntity> {
+  async create(
+    data: CreateServiceCategoryData,
+  ): Promise<ServiceCategoryEntity> {
     const row = await this.prisma.serviceCategory.create({ data });
     return this.toEntity(row);
   }

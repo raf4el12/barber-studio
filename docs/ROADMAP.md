@@ -40,7 +40,12 @@ graph TD
 | **4** | Mód. 2 — POS y Flujo de Caja | Tickets con snapshot de comisión + IGV, pago dividido, propinas, caja, recepción reactiva | 1, 2, 3 | [04-pos-payments](modules/04-pos-payments.md) |
 | **5** | Mód. 5 (parte) — Clientes | `Customer`, ledger de fidelización, acumulación/canje de puntos | 4 | [05-customers-loyalty](modules/05-customers-loyalty.md) |
 | **6** | Mód. 5 (parte) — Analítica y Cierres | Z-Report (arqueo por método + pago a barberos), métricas | 4, 5 | [06-reports-closing](modules/06-reports-closing.md) |
-| **7** | Mód. 6 — Seguridad transversal | Interceptor de `AuditLog`, hardening RBAC por sucursal | 0, 4 | [07-security-audit](modules/07-security-audit.md) |
+| **7** | Mód. 6 — Seguridad transversal | Auditoría de use-cases (`AuditLog`), hardening RBAC por sucursal | 0, 4 | [07-security-audit](modules/07-security-audit.md) |
+| **8** | Frontend — Portal del Barbero | App Next.js 16, cola reactiva, creación de tickets, widget de rendimiento | 3, 4 | [08-frontend-barber-portal](modules/08-frontend-barber-portal.md) |
+| **9** | Frontend — Estación POS y Caja | Estación POS, apertura/cierre de caja, pago dividido, propinas y vuelto | 4, 8 | [09-frontend-pos-station](modules/09-frontend-pos-station.md) |
+| **10** | Frontend — Backoffice Catálogo e Inventario | Gestión de servicios, categorías, productos retail, stock por sucursal y movimientos | 1, 9 | [10-frontend-admin-catalog-inventory](modules/10-frontend-admin-catalog-inventory.md) |
+| **11** | Frontend — Personal, Sedes y Comisiones | Cuentas de equipo, gestión de sedes, motor jerárquico de comisiones y simulador | 2, 10 | [11-frontend-admin-staff-commissions](modules/11-frontend-admin-staff-commissions.md) |
+| **12** | Frontend — Clientes y Fidelización | Directorio unificado, libro mayor de puntos, canje en tiempo real e historial | 5, 11 | [12-frontend-admin-customers-loyalty](modules/12-frontend-admin-customers-loyalty.md) |
 
 ---
 

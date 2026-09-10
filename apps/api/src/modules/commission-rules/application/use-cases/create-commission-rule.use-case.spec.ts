@@ -10,16 +10,14 @@ describe('CreateCommissionRuleUseCase', () => {
 
   beforeEach(() => {
     repo = {
-      create: jest
-        .fn()
-        .mockImplementation((data: object) =>
-          Promise.resolve({
-            id: 'rule-1',
-            createdAt: new Date('2026-01-01T00:00:00Z'),
-            updatedAt: new Date('2026-01-01T00:00:00Z'),
-            ...data,
-          }),
-        ),
+      create: jest.fn().mockImplementation((data: object) =>
+        Promise.resolve({
+          id: 'rule-1',
+          createdAt: new Date('2026-01-01T00:00:00Z'),
+          updatedAt: new Date('2026-01-01T00:00:00Z'),
+          ...data,
+        }),
+      ),
     };
     audit = { execute: jest.fn().mockResolvedValue(undefined) };
     useCase = new CreateCommissionRuleUseCase(

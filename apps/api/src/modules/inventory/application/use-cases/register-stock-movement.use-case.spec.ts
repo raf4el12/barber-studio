@@ -5,10 +5,7 @@ import type { IInventoryRepository } from '../../domain/repositories/inventory.r
 
 describe('RegisterStockMovementUseCase', () => {
   let repo: jest.Mocked<
-    Pick<
-      IInventoryRepository,
-      'findByBranchAndProduct' | 'registerMovement'
-    >
+    Pick<IInventoryRepository, 'findByBranchAndProduct' | 'registerMovement'>
   >;
   let audit: { execute: jest.Mock };
   let useCase: RegisterStockMovementUseCase;

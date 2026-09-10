@@ -37,11 +37,11 @@
 
 ## Tareas
 
-- [ ] **`CatalogModule`**: CRUD de `ServiceCategory` y `Service` con DTOs validados (`price >= 0`, `durationMinutes?` positivo). Soft-delete.
-- [ ] **`ProductsModule`**: CRUD de `Product` (`sku` único opcional, `cost?`). Soft-delete.
-- [ ] **`InventoryService.registerMovement()`**: en `$transaction`, crea `StockMovement` y hace `upsert` de `Inventory` sumando `quantity`. Lanza error si el resultado sería negativo y el tipo no es `ADJUSTMENT`.
-- [ ] **Listado de stock** por sucursal con join al producto.
-- [ ] **Endpoint low-stock**: `Inventory` donde `quantity <= lowStockThreshold`.
+- [x] **`CatalogModule`**: CRUD de `ServiceCategory` y `Service` con DTOs validados (`price >= 0`, `durationMinutes?` positivo). Soft-delete.
+- [x] **`ProductsModule`**: CRUD de `Product` (`sku` único opcional, `cost?`). Soft-delete.
+- [x] **`InventoryService.registerMovement()`**: en `$transaction`, crea `StockMovement` y hace `upsert` de `Inventory` sumando `quantity`. Lanza error si el resultado sería negativo y el tipo no es `ADJUSTMENT`.
+- [x] **Listado de stock** por sucursal con join al producto.
+- [x] **Endpoint low-stock**: `Inventory` donde `quantity <= lowStockThreshold`.
 
 ## Criterios de aceptación
 

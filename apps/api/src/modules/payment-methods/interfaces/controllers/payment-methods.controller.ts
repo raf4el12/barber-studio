@@ -38,6 +38,7 @@ export class PaymentMethodsController {
   }
 
   @Get()
+  @Roles(Role.OWNER, Role.CASHIER)
   findAll(@Query('isActive') isActive?: string) {
     return this.findAllMethods.execute(parseActive(isActive));
   }

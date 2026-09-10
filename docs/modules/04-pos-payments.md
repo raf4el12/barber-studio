@@ -64,12 +64,12 @@ Totales del ticket = suma de líneas (`subtotal`, `discountAmount`, `taxAmount`,
 
 ## Tareas
 
-- [ ] **`PaymentMethodsModule`**: CRUD; no permitir borrar uno con pagos (desactivar con `isActive=false`).
-- [ ] **`CashRegistersModule`**: abrir (una activa por sucursal), cerrar con `closingCountedCash`.
-- [ ] **`TicketsService.create()`**: `$transaction` que calcula snapshots por línea (descuento + IGV + comisión) y totales; estado `OPEN`; emite `ticket.created`.
-- [ ] **`TicketsService.addPayment()`**: valida caja activa, suma pagos, actualiza estado; al completar descuenta stock y emite `ticket.paid`.
-- [ ] **Descuento manual** y **anulación** con sus reglas.
-- [ ] **Conectar "Mi Rendimiento"** (Fase 3): sumar `commissionAmount` de los tickets `PAID` del barbero en el turno.
+- [x] **`PaymentMethodsModule`**: CRUD; no permitir borrar uno con pagos (desactivar con `isActive=false`).
+- [x] **`CashRegistersModule`**: abrir (una activa por sucursal), cerrar con `closingCountedCash`.
+- [x] **`TicketsService.create()`**: `$transaction` que calcula snapshots por línea (descuento + IGV + comisión) y totales; estado `OPEN`; emite `ticket.created`.
+- [x] **`TicketsService.addPayment()`**: valida caja activa, suma pagos, actualiza estado; al completar descuenta stock y emite `ticket.paid`.
+- [x] **Descuento manual** y **anulación** con sus reglas.
+- [x] **Conectar "Mi Rendimiento"** (Fase 3): sumar `commissionAmount` de los tickets `PAID` del barbero en el turno.
 
 ## Criterios de aceptación
 

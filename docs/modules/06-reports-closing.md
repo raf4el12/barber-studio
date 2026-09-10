@@ -43,10 +43,10 @@
 
 ## Tareas
 
-- [ ] **`ReportsModule`** (solo lectura, sin entidades nuevas).
-- [ ] **`ZReportService.build(scope)`**: agrega ingresos por método, calcula efectivo esperado vs contado, y el payout por barbero. Devuelve un DTO estructurado.
-- [ ] **`barber-payouts`**: agregación de comisión + propina por barbero en un rango.
-- [ ] **`metrics`**: `groupBy` por día (afluencia), por barbero (productividad), por servicio (más solicitados).
+- [x] **`ReportsModule`** (solo lectura, sin entidades nuevas).
+- [x] **`ZReportService.build(scope)`**: agrega ingresos por método, calcula efectivo esperado vs contado, y el payout por barbero. Devuelve un DTO estructurado.
+- [x] **`barber-payouts`**: agregación de comisión + propina por barbero en un rango.
+- [x] **`metrics`**: `groupBy` por día (afluencia), por barbero (productividad), por servicio (más solicitados).
 
 ## Criterios de aceptación
 

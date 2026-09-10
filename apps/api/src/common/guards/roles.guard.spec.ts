@@ -21,17 +21,29 @@ describe('RolesGuard', () => {
 
   it('allows when no roles are required', () => {
     const guard = makeGuard(undefined);
-    expect(guard.canActivate(contextWith({ id: 'u', role: Role.BARBER, branchId: null }))).toBe(true);
+    expect(
+      guard.canActivate(
+        contextWith({ id: 'u', role: Role.BARBER, branchId: null }),
+      ),
+    ).toBe(true);
   });
 
   it('allows when the user has a required role', () => {
     const guard = makeGuard([Role.OWNER]);
-    expect(guard.canActivate(contextWith({ id: 'u', role: Role.OWNER, branchId: null }))).toBe(true);
+    expect(
+      guard.canActivate(
+        contextWith({ id: 'u', role: Role.OWNER, branchId: null }),
+      ),
+    ).toBe(true);
   });
 
   it('denies when the user lacks the required role', () => {
     const guard = makeGuard([Role.OWNER]);
-    expect(guard.canActivate(contextWith({ id: 'u', role: Role.BARBER, branchId: null }))).toBe(false);
+    expect(
+      guard.canActivate(
+        contextWith({ id: 'u', role: Role.BARBER, branchId: null }),
+      ),
+    ).toBe(false);
   });
 
   it('denies when there is no user', () => {

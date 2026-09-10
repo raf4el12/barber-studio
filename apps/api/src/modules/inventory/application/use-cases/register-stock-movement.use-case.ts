@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { StockMovementType } from '@prisma/client';
 import {
   INVENTORY_REPOSITORY,
@@ -27,7 +23,9 @@ export class RegisterStockMovementUseCase {
   ) {
     const branchId = dto.branchId ?? effectiveBranchId;
     if (!branchId) {
-      throw new BadRequestException('Se requiere especificar la sucursal (branchId)');
+      throw new BadRequestException(
+        'Se requiere especificar la sucursal (branchId)',
+      );
     }
 
     // Normalizar signo según el tipo de movimiento

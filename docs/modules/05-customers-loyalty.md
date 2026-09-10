@@ -37,10 +37,10 @@
 
 ## Tareas
 
-- [ ] **`CustomersModule`**: CRUD con DTOs (`phone`/`email` opcionales, únicos suaves a nivel app si se desea). Soft-delete.
-- [ ] **`LoyaltyService.accrue(customerId, ticket)`**: crea asiento + actualiza cache; invocado desde Fase 4 al pagar.
-- [ ] **`LoyaltyService.redeem(customerId, points, reason)`**: valida saldo, crea asiento negativo.
-- [ ] **Historial**: tickets del cliente ordenados por fecha; ledger de puntos con saldo corrido.
+- [x] **`CustomersModule`**: CRUD con DTOs (`phone`/`email` opcionales, únicos suaves a nivel app si se desea). Soft-delete.
+- [x] **`LoyaltyService.accrue(customerId, ticket)`**: crea asiento + actualiza cache; invocado desde Fase 4 al pagar.
+- [x] **`LoyaltyService.redeem(customerId, points, reason)`**: valida saldo, crea asiento negativo.
+- [x] **Historial**: tickets del cliente ordenados por fecha; ledger de puntos con saldo corrido.
 
 ## Criterios de aceptación
 

@@ -3,6 +3,7 @@ import { CommissionType } from '@prisma/client';
 import { UpdateCommissionRuleUseCase } from './update-commission-rule.use-case';
 import type { ICommissionRuleRepository } from '../../domain/repositories/commission-rule.repository';
 import type { CommissionRuleEntity } from '../../domain/entities/commission-rule.entity';
+import type { WriteAuditData } from '../../../audit/domain/interfaces/audit-data.interface';
 
 function existingRule(): CommissionRuleEntity {
   return {
@@ -26,7 +27,7 @@ function existingRule(): CommissionRuleEntity {
 
 describe('UpdateCommissionRuleUseCase', () => {
   let repo: jest.Mocked<Pick<ICommissionRuleRepository, 'findById' | 'update'>>;
-  let audit: { execute: jest.Mock };
+  let audit: { execute: jest.Mock<Promise<void>, [WriteAuditData]> };
   let useCase: UpdateCommissionRuleUseCase;
 
   beforeEach(() => {
@@ -38,7 +39,11 @@ describe('UpdateCommissionRuleUseCase', () => {
           Promise.resolve({ ...existingRule(), ...data }),
         ),
     };
-    audit = { execute: jest.fn().mockResolvedValue(undefined) };
+    audit = {
+      execute: jest
+        .fn<Promise<void>, [WriteAuditData]>()
+        .mockResolvedValue(undefined),
+    };
     useCase = new UpdateCommissionRuleUseCase(
       repo as unknown as ICommissionRuleRepository,
       audit as never,
@@ -71,17 +76,23 @@ describe('UpdateCommissionRuleUseCase', () => {
   it('audita before/after con el usuario actor', async () => {
     repo.update.mockResolvedValue({ ...existingRule(), value: 20 });
     await useCase.execute('rule-1', { value: 20 }, 'owner-1');
-    expect(audit.execute).toHaveBeenCalledWith({
-      userId: 'owner-1',
-      branchId: null,
-      action: 'COMMISSION_RULE_CHANGED',
-      entityType: 'CommissionRule',
-      entityId: 'rule-1',
-      metadata: {
-        operation: 'update',
-        before: expect.objectContaining({ value: 10 }),
-        after: expect.objectContaining({ value: 20 }),
-      },
-    });
+    expect(audit.execute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 'owner-1',
+        branchId: null,
+        action: 'COMMISSION_RULE_CHANGED',
+        entityType: 'CommissionRule',
+        entityId: 'rule-1',
+      }),
+    );
+    const lastCall = audit.execute.mock.lastCall?.[0];
+    const metadata = lastCall?.metadata as {
+      operation: string;
+      before: { value: number };
+      after: { value: number };
+    };
+    expect(metadata.operation).toBe('update');
+    expect(metadata.before.value).toBe(10);
+    expect(metadata.after.value).toBe(20);
   });
 });

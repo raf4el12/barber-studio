@@ -36,7 +36,9 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async update(id: string, data: UpdateUserData): Promise<UserEntity> {
-    return this.toEntity(await this.prisma.user.update({ where: { id }, data }));
+    return this.toEntity(
+      await this.prisma.user.update({ where: { id }, data }),
+    );
   }
 
   async softDelete(id: string): Promise<void> {
