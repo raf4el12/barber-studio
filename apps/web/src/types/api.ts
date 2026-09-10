@@ -365,3 +365,56 @@ export interface CloseCashRegisterDto {
   notes?: string;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+  loyaltyPoints: number;
+  isActive: boolean;
+  branchId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+}
+
+export interface CreateCustomerDto {
+  name: string;
+  phone?: string;
+  email?: string;
+  notes?: string;
+  branchId?: string;
+  isActive?: boolean;
+}
+
+export interface UpdateCustomerDto {
+  name?: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+  branchId?: string | null;
+  isActive?: boolean;
+}
+
+export interface LoyaltyLedgerEntry {
+  id: string;
+  customerId: string;
+  points: number;
+  reason: string;
+  ticketId?: string | null;
+  createdAt: string;
+  runningBalance?: number;
+}
+
+export interface CustomerLoyaltyData {
+  customerId: string;
+  balance: number;
+  ledger: LoyaltyLedgerEntry[];
+}
+
+export interface RedeemLoyaltyDto {
+  points: number;
+  reason: string;
+}
+

@@ -15,6 +15,7 @@ import {
   Building2,
   Loader2,
   ShieldAlert,
+  Award,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -96,6 +97,12 @@ export default function AdminLayout({
       label: 'Comisiones',
       icon: <Percent className="w-4 h-4" />,
       active: pathname.startsWith('/admin/commissions'),
+    },
+    {
+      href: '/admin/customers',
+      label: 'Clientes y Puntos',
+      icon: <Award className="w-4 h-4" />,
+      active: pathname.startsWith('/admin/customers'),
     },
   ];
 

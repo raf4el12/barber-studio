@@ -33,6 +33,12 @@ import type {
   UpdateCommissionRuleDto,
   PreviewCommissionDto,
   CommissionResolution,
+  Customer,
+  CreateCustomerDto,
+  UpdateCustomerDto,
+  CustomerLoyaltyData,
+  LoyaltyLedgerEntry,
+  RedeemLoyaltyDto,
 } from '@/types/api';
 
 const API_BASE =
@@ -350,6 +356,39 @@ export const api = {
       }),
     preview: (dto: PreviewCommissionDto) =>
       request<CommissionResolution>('/commission-rules/preview', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+  },
+
+  customers: {
+    list: (branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<Customer[]>(`/customers${q}`);
+    },
+    getById: (id: string) => request<Customer>(`/customers/${id}`),
+    create: (dto: CreateCustomerDto) =>
+      request<Customer>('/customers', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    update: (id: string, dto: UpdateCustomerDto) =>
+      request<Customer>(`/customers/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    delete: (id: string) =>
+      request<void>(`/customers/${id}`, {
+        method: 'DELETE',
+      }),
+    getHistory: (id: string, branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<Ticket[]>(`/customers/${id}/history${q}`);
+    },
+    getLoyalty: (id: string) =>
+      request<CustomerLoyaltyData>(`/customers/${id}/loyalty`),
+    redeemLoyalty: (id: string, dto: RedeemLoyaltyDto) =>
+      request<LoyaltyLedgerEntry>(`/customers/${id}/loyalty/redeem`, {
         method: 'POST',
         body: JSON.stringify(dto),
       }),

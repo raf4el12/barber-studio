@@ -45,6 +45,7 @@ graph TD
 | **9** | Frontend — Estación POS y Caja | Estación POS, apertura/cierre de caja, pago dividido, propinas y vuelto | 4, 8 | [09-frontend-pos-station](modules/09-frontend-pos-station.md) |
 | **10** | Frontend — Backoffice Catálogo e Inventario | Gestión de servicios, categorías, productos retail, stock por sucursal y movimientos | 1, 9 | [10-frontend-admin-catalog-inventory](modules/10-frontend-admin-catalog-inventory.md) |
 | **11** | Frontend — Personal, Sedes y Comisiones | Cuentas de equipo, gestión de sedes, motor jerárquico de comisiones y simulador | 2, 10 | [11-frontend-admin-staff-commissions](modules/11-frontend-admin-staff-commissions.md) |
+| **12** | Frontend — Clientes y Fidelización | Directorio unificado, libro mayor de puntos, canje en tiempo real e historial | 5, 11 | [12-frontend-admin-customers-loyalty](modules/12-frontend-admin-customers-loyalty.md) |
 
 ---
 
