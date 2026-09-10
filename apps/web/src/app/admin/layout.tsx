@@ -8,6 +8,8 @@ import {
   Scissors,
   Layers,
   Boxes,
+  Users,
+  Percent,
   DollarSign,
   LogOut,
   Building2,
@@ -82,6 +84,18 @@ export default function AdminLayout({
       label: 'Inventario y Stock',
       icon: <Boxes className="w-4 h-4" />,
       active: pathname.startsWith('/admin/inventory'),
+    },
+    {
+      href: '/admin/staff',
+      label: 'Personal y Sedes',
+      icon: <Users className="w-4 h-4" />,
+      active: pathname.startsWith('/admin/staff'),
+    },
+    {
+      href: '/admin/commissions',
+      label: 'Comisiones',
+      icon: <Percent className="w-4 h-4" />,
+      active: pathname.startsWith('/admin/commissions'),
     },
   ];
 

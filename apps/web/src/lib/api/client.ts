@@ -24,6 +24,15 @@ import type {
   RegisterStockMovementDto,
   UpdateStockThresholdDto,
   InventoryItem,
+  CreateUserDto,
+  UpdateUserDto,
+  CreateBranchDto,
+  UpdateBranchDto,
+  CommissionRule,
+  CreateCommissionRuleDto,
+  UpdateCommissionRuleDto,
+  PreviewCommissionDto,
+  CommissionResolution,
 } from '@/types/api';
 
 const API_BASE =
@@ -284,7 +293,65 @@ export const api = {
     },
   },
 
+  users: {
+    list: () => request<User[]>('/users'),
+    getById: (id: string) => request<User>(`/users/${id}`),
+    create: (dto: CreateUserDto) =>
+      request<User>('/users', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    update: (id: string, dto: UpdateUserDto) =>
+      request<User>(`/users/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    delete: (id: string) =>
+      request<void>(`/users/${id}`, {
+        method: 'DELETE',
+      }),
+  },
+
   branches: {
     list: () => request<Branch[]>('/branches'),
+    getById: (id: string) => request<Branch>(`/branches/${id}`),
+    create: (dto: CreateBranchDto) =>
+      request<Branch>('/branches', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    update: (id: string, dto: UpdateBranchDto) =>
+      request<Branch>(`/branches/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    delete: (id: string) =>
+      request<void>(`/branches/${id}`, {
+        method: 'DELETE',
+      }),
+  },
+
+  commissions: {
+    list: () => request<CommissionRule[]>('/commission-rules'),
+    getById: (id: string) => request<CommissionRule>(`/commission-rules/${id}`),
+    create: (dto: CreateCommissionRuleDto) =>
+      request<CommissionRule>('/commission-rules', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
+    update: (id: string, dto: UpdateCommissionRuleDto) =>
+      request<CommissionRule>(`/commission-rules/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      }),
+    delete: (id: string) =>
+      request<void>(`/commission-rules/${id}`, {
+        method: 'DELETE',
+      }),
+    preview: (dto: PreviewCommissionDto) =>
+      request<CommissionResolution>('/commission-rules/preview', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      }),
   },
 };

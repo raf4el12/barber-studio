@@ -12,8 +12,26 @@ export interface User {
   email: string;
   role: Role;
   branchId: string | null;
+  branch?: Branch | null;
   commissionRate?: number | string | null;
   isActive: boolean;
+}
+
+export interface CreateUserDto {
+  name: string;
+  email: string;
+  password?: string;
+  role: Role;
+  branchId?: string;
+}
+
+export interface UpdateUserDto {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: Role;
+  branchId?: string;
+  isActive?: boolean;
 }
 
 export interface Branch {
@@ -22,6 +40,85 @@ export interface Branch {
   address?: string | null;
   phone?: string | null;
   isActive: boolean;
+}
+
+export interface CreateBranchDto {
+  name: string;
+  address?: string;
+  phone?: string;
+}
+
+export interface UpdateBranchDto {
+  name?: string;
+  address?: string;
+  phone?: string;
+  isActive?: boolean;
+}
+
+export interface CommissionRule {
+  id: string;
+  name: string | null;
+  priority: number;
+  type: 'PERCENTAGE' | 'FIXED';
+  value: number;
+  isActive: boolean;
+  barberId?: string | null;
+  serviceId?: string | null;
+  serviceCategoryId?: string | null;
+  productId?: string | null;
+  branchId?: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCommissionRuleDto {
+  name?: string | null;
+  priority?: number;
+  type: 'PERCENTAGE' | 'FIXED';
+  value: number;
+  isActive?: boolean;
+  barberId?: string | null;
+  serviceId?: string | null;
+  serviceCategoryId?: string | null;
+  productId?: string | null;
+  branchId?: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+}
+
+export interface UpdateCommissionRuleDto {
+  name?: string | null;
+  priority?: number;
+  type?: 'PERCENTAGE' | 'FIXED';
+  value?: number;
+  isActive?: boolean;
+  barberId?: string | null;
+  serviceId?: string | null;
+  serviceCategoryId?: string | null;
+  productId?: string | null;
+  branchId?: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+}
+
+export interface PreviewCommissionDto {
+  barberId: string;
+  branchId?: string;
+  serviceId?: string;
+  productId?: string;
+  quantity?: number;
+  unitPrice: number;
+  at?: string;
+}
+
+export interface CommissionResolution {
+  type: 'PERCENTAGE' | 'FIXED';
+  value: number;
+  amount: number;
+  source: 'RULE' | 'USER_RATE' | 'GLOBAL_SETTING';
+  ruleId?: string;
 }
 
 export interface QueueEntry {
