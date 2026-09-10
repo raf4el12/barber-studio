@@ -44,10 +44,10 @@
 
 ## Tareas
 
-- [ ] **`QueueModule`**: CRUD con validación de transición de estado.
-- [ ] **`QueueGateway`**: rooms por sucursal; emitir `queue.updated` tras cada mutación (el service llama al gateway).
-- [ ] **Auth en WS**: validar JWT en `handleConnection`; rechazar sin token.
-- [ ] **`/me/performance`**: contar `COMPLETED` del barbero en el turno. La columna de comisión estimada queda en `0`/placeholder y se conecta al `CommissionResolverService` en Fase 4.
+- [x] **`QueueModule`**: CRUD con validación de transición de estado.
+- [x] **`QueueGateway`**: rooms por sucursal; emitir `queue.updated` tras cada mutación (el service llama al gateway).
+- [x] **Auth en WS**: validar JWT en `handleConnection`; rechazar sin token.
+- [x] **`/me/performance`**: contar `COMPLETED` del barbero en el turno. Conectado al total de comisiones y propinas de tickets pagados.
 
 ## Criterios de aceptación
 

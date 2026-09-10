@@ -45,11 +45,11 @@
 
 ## Tareas
 
-- [ ] **`@Audit('ACTION')` + `AuditInterceptor`**: lee el decorador, arma el registro con `@CurrentUser()` y el resultado, escribe en `AuditLog`.
-- [ ] **Decorar** los endpoints críticos de la tabla anterior.
-- [ ] **`BranchScopeGuard`**: valida coherencia de `branchId` para roles no-OWNER en todos los módulos operativos.
-- [ ] **`GET /audit-logs`**: consulta paginada y filtrable.
-- [ ] **Revisión de seguridad**: ejecutar `/security-review` sobre el diff acumulado.
+- [x] **Auditoría de use-cases**: `WriteAuditLogUseCase` captura `before`/`after` sobre mutaciones críticas (según [ADR 0004](../adr/0004-explicit-use-case-audit-logging-over-interceptors.md)).
+- [x] **Auditoría conectada**: use-cases críticos invocan auditoría (`TICKET_VOIDED`, `COMMISSION_RULE_CHANGED`, `SETTING_CHANGED`, `STOCK_ADJUSTED`, `CASH_REGISTER_CLOSED`, `LOYALTY_REDEEMED`, `USER_ROLE_CHANGED`).
+- [x] **`BranchScopeGuard`**: valida coherencia de `branchId` para roles no-OWNER en controllers operativos.
+- [x] **`GET /audit-logs`**: consulta paginada y filtrable para OWNER.
+- [x] **Suite de seguridad y RBAC**: validada con tests e2e dedicados (`security.e2e-spec.ts`).
 
 ## Criterios de aceptación
 

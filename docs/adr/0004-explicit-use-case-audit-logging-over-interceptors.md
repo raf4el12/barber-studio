@@ -1,0 +1,3 @@
+# Explicit Use-Case Audit Logging over Controller Interceptors
+
+We record business audit entries directly within application use-cases via `WriteAuditLogUseCase` instead of using a generic HTTP controller interceptor (`@Audit()`). We rejected a pure interceptor approach because HTTP interceptors lack access to the pre-mutation entity state (`before` snapshot) needed to compute accurate diffs on critical operations (e.g. commission rule updates, setting changes, ticket voiding, user role modifications), whereas use-cases naturally retrieve the existing entity before executing mutations inside database transactions.

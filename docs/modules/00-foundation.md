@@ -30,14 +30,14 @@
 
 ## Tareas
 
-- [ ] **Instalar dependencias**: `pnpm --filter api add @prisma/adapter-pg pg @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt class-validator class-transformer` y los `@types/*`.
-- [ ] **Migración inicial**: `pnpm --filter api exec prisma migrate dev --name init` (con Docker DB arriba). Verificar tablas creadas.
-- [ ] **`PrismaService`**: extiende `PrismaClient` con `new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) })`; `onModuleInit` → `$connect`. Exportar en `PrismaModule` global.
-- [ ] **Middleware soft-delete**: en lecturas `findMany/findFirst` de modelos con `deletedAt`, inyectar `where: { deletedAt: null }`; "delete" se traduce a `update { deletedAt: now }`.
-- [ ] **`AuthModule`**: `POST /auth/login` valida con bcrypt y firma JWT (`sub`, `role`, `branchId`). `JwtStrategy` valida y carga el usuario.
-- [ ] **Guards y decoradores**: `JwtAuthGuard` (global salvo `@Public()`), `RolesGuard` + `@Roles(Role.OWNER)`, `@CurrentUser()` que expone `{ id, role, branchId }`.
-- [ ] **`BranchesModule` y `UsersModule`**: CRUD con validación; crear usuario hashea password.
-- [ ] **Seed** (`prisma/seed.ts`): 1 sucursal, 1 usuario OWNER, métodos de pago `CASH/YAPE/PLIN`, settings `commission_base_percentage=40` y `tax_rate=18`. Idempotente (`upsert`).
+- [x] **Instalar dependencias**: `pnpm --filter api add @prisma/adapter-pg pg @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt class-validator class-transformer` y los `@types/*`.
+- [x] **Migración inicial**: `pnpm --filter api exec prisma migrate dev --name init` (con Docker DB arriba). Verificar tablas creadas.
+- [x] **`PrismaService`**: extiende `PrismaClient` con `new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) })`; `onModuleInit` → `$connect`. Exportar en `PrismaModule` global.
+- [x] **Middleware soft-delete**: en lecturas `findMany/findFirst` de modelos con `deletedAt`, inyectar `where: { deletedAt: null }`; "delete" se traduce a `update { deletedAt: now }`.
+- [x] **`AuthModule`**: `POST /auth/login` valida con bcrypt y firma JWT (`sub`, `role`, `branchId`). `JwtStrategy` valida y carga el usuario.
+- [x] **Guards y decoradores**: `JwtAuthGuard` (global salvo `@Public()`), `RolesGuard` + `@Roles(Role.OWNER)`, `@CurrentUser()` que expone `{ id, role, branchId }`.
+- [x] **`BranchesModule` y `UsersModule`**: CRUD con validación; crear usuario hashea password.
+- [x] **Seed** (`prisma/seed.ts`): 1 sucursal, 1 usuario OWNER, métodos de pago `CASH/YAPE/PLIN`, settings `commission_base_percentage=40` y `tax_rate=18`. Idempotente (`upsert`).
 
 ## Criterios de aceptación
 

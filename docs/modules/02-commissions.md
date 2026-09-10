@@ -46,10 +46,10 @@ Para un ítem (servicio o producto), barbero y fecha:
 
 ## Tareas
 
-- [ ] **`SettingsService`**: `get(key, branchId?)` con fallback a global; `set(key, value, branchId?)` vía `upsert` sobre `@@unique([branchId, key])`.
-- [ ] **`CommissionRulesModule`**: CRUD con DTOs (`type ∈ {PERCENTAGE, FIXED}`, `value >= 0`, validación de rango de fechas).
-- [ ] **`CommissionResolverService.resolve(input)`**: implementa el algoritmo anterior. Función **pura** sobre datos cargados (recibe reglas candidatas + settings), fácil de testear.
-- [ ] **Endpoint preview**: expone el resolver para que la dueña valide reglas antes de aplicarlas.
+- [x] **`SettingsService`**: `get(key, branchId?)` con fallback a global; `set(key, value, branchId?)` vía `upsert` sobre `@@unique([branchId, key])`.
+- [x] **`CommissionRulesModule`**: CRUD con DTOs (`type ∈ {PERCENTAGE, FIXED}`, `value >= 0`, validación de rango de fechas).
+- [x] **`CommissionResolverService.resolve(input)`**: implementa el algoritmo anterior. Función **pura** sobre datos cargados (recibe reglas candidatas + settings), fácil de testear.
+- [x] **Endpoint preview**: expone el resolver para que la dueña valide reglas antes de aplicarlas.
 
 ## Criterios de aceptación
 

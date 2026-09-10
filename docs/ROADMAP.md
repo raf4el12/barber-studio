@@ -40,7 +40,7 @@ graph TD
 | **4** | Mód. 2 — POS y Flujo de Caja | Tickets con snapshot de comisión + IGV, pago dividido, propinas, caja, recepción reactiva | 1, 2, 3 | [04-pos-payments](modules/04-pos-payments.md) |
 | **5** | Mód. 5 (parte) — Clientes | `Customer`, ledger de fidelización, acumulación/canje de puntos | 4 | [05-customers-loyalty](modules/05-customers-loyalty.md) |
 | **6** | Mód. 5 (parte) — Analítica y Cierres | Z-Report (arqueo por método + pago a barberos), métricas | 4, 5 | [06-reports-closing](modules/06-reports-closing.md) |
-| **7** | Mód. 6 — Seguridad transversal | Interceptor de `AuditLog`, hardening RBAC por sucursal | 0, 4 | [07-security-audit](modules/07-security-audit.md) |
+| **7** | Mód. 6 — Seguridad transversal | Auditoría de use-cases (`AuditLog`), hardening RBAC por sucursal | 0, 4 | [07-security-audit](modules/07-security-audit.md) |
 
 ---
 
