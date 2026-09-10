@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   const setTestUser = (testEmail: string) => {
     setEmail(testEmail);
-    setPassword('owner123'); // Default password from seed
+    setPassword('password123'); // Default password from seed
   };
 
   return (
@@ -122,7 +122,7 @@ export default function LoginPage() {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               type="button"
-              onClick={() => setTestUser('owner@barberstudio.com')}
+              onClick={() => setTestUser('owner@barber.studio')}
               className="text-xs bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 px-3 py-1.5 rounded-lg border border-zinc-700/50 transition cursor-pointer"
             >
               👤 Owner / Admin

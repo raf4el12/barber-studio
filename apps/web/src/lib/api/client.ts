@@ -39,6 +39,9 @@ import type {
   CustomerLoyaltyData,
   LoyaltyLedgerEntry,
   RedeemLoyaltyDto,
+  ZReportData,
+  BarberPayoutsReport,
+  BusinessMetricsReport,
 } from '@/types/api';
 
 const API_BASE =
@@ -392,5 +395,44 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(dto),
       }),
+  },
+
+  reports: {
+    zReport: (query: {
+      cashRegisterId?: string;
+      branchId?: string;
+      date?: string;
+    }) => {
+      const params = new URLSearchParams();
+      if (query.cashRegisterId) params.append('cashRegisterId', query.cashRegisterId);
+      if (query.branchId) params.append('branchId', query.branchId);
+      if (query.date) params.append('date', query.date);
+      const q = params.toString() ? `?${params.toString()}` : '';
+      return request<ZReportData>(`/reports/z-report${q}`);
+    },
+    barberPayouts: (query: {
+      branchId?: string;
+      from?: string;
+      to?: string;
+    }) => {
+      const params = new URLSearchParams();
+      if (query.branchId) params.append('branchId', query.branchId);
+      if (query.from) params.append('from', query.from);
+      if (query.to) params.append('to', query.to);
+      const q = params.toString() ? `?${params.toString()}` : '';
+      return request<BarberPayoutsReport>(`/reports/barber-payouts${q}`);
+    },
+    metrics: (query: {
+      branchId?: string;
+      from?: string;
+      to?: string;
+    }) => {
+      const params = new URLSearchParams();
+      if (query.branchId) params.append('branchId', query.branchId);
+      if (query.from) params.append('from', query.from);
+      if (query.to) params.append('to', query.to);
+      const q = params.toString() ? `?${params.toString()}` : '';
+      return request<BusinessMetricsReport>(`/reports/metrics${q}`);
+    },
   },
 };
