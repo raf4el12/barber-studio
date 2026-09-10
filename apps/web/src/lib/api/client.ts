@@ -42,6 +42,10 @@ import type {
   ZReportData,
   BarberPayoutsReport,
   BusinessMetricsReport,
+  Setting,
+  UpsertSettingDto,
+  ListAuditLogsQuery,
+  AuditLogsResponse,
 } from '@/types/api';
 
 const API_BASE =
@@ -433,6 +437,39 @@ export const api = {
       if (query.to) params.append('to', query.to);
       const q = params.toString() ? `?${params.toString()}` : '';
       return request<BusinessMetricsReport>(`/reports/metrics${q}`);
+    },
+  },
+
+  settings: {
+    list: (branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<Setting[]>(`/settings${q}`);
+    },
+    get: (key: string, branchId?: string) => {
+      const q = branchId ? `?branchId=${encodeURIComponent(branchId)}` : '';
+      return request<Setting>(`/settings/${encodeURIComponent(key)}${q}`);
+    },
+    upsert: (dto: UpsertSettingDto) =>
+      request<Setting>('/settings', {
+        method: 'PUT',
+        body: JSON.stringify(dto),
+      }),
+  },
+
+  audit: {
+    list: (query: ListAuditLogsQuery = {}) => {
+      const params = new URLSearchParams();
+      if (query.action) params.append('action', query.action);
+      if (query.entityType) params.append('entityType', query.entityType);
+      if (query.entityId) params.append('entityId', query.entityId);
+      if (query.userId) params.append('userId', query.userId);
+      if (query.branchId) params.append('branchId', query.branchId);
+      if (query.from) params.append('from', query.from);
+      if (query.to) params.append('to', query.to);
+      if (query.page) params.append('page', String(query.page));
+      if (query.limit) params.append('limit', String(query.limit));
+      const q = params.toString() ? `?${params.toString()}` : '';
+      return request<AuditLogsResponse>(`/audit-logs${q}`);
     },
   },
 };

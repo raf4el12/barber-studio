@@ -507,3 +507,56 @@ export interface BusinessMetricsReport {
   topServices: TopService[];
 }
 
+export interface Setting {
+  id: string;
+  branchId: string | null;
+  key: string;
+  value: string;
+  updatedAt: string;
+}
+
+export interface UpsertSettingDto {
+  key: string;
+  value: string;
+  branchId?: string | null;
+}
+
+export type AuditActionType =
+  | 'TICKET_VOIDED'
+  | 'COMMISSION_RULE_CHANGED'
+  | 'SETTING_CHANGED'
+  | 'STOCK_ADJUSTED'
+  | 'CASH_REGISTER_CLOSED'
+  | 'LOYALTY_REDEEMED'
+  | 'USER_ROLE_CHANGED';
+
+export interface AuditLog {
+  id: string;
+  userId: string | null;
+  branchId: string | null;
+  action: AuditActionType | string;
+  entityType: string | null;
+  entityId: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface ListAuditLogsQuery {
+  action?: string;
+  entityType?: string;
+  entityId?: string;
+  userId?: string;
+  branchId?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AuditLogsResponse {
+  data: AuditLog[];
+  total: number;
+  page: number;
+  limit: number;
+}
+

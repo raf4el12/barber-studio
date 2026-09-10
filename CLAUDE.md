@@ -48,3 +48,13 @@ This is Prisma **7**, not 5/6. Breaking change: the `url` field is **not allowed
 ## Environment
 
 `apps/api/.env` holds `PORT`, `DATABASE_URL` (pointing to Docker Postgres at `localhost:5432/barber_studio`), and `JWT_SECRET`. `apps/web/.env.local` holds `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` pointing to `http://localhost:3100`.
+
+## Agent skills
+
+### Issue tracker
+
+Local markdown in `.scratch/`. Active effort at `.scratch/architecture-refactor/`. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context repo using `CONTEXT.md` at root and `docs/adr/`. See `docs/agents/domain.md`.
