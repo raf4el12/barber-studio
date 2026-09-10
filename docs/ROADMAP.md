@@ -41,6 +41,8 @@ graph TD
 | **5** | Mód. 5 (parte) — Clientes | `Customer`, ledger de fidelización, acumulación/canje de puntos | 4 | [05-customers-loyalty](modules/05-customers-loyalty.md) |
 | **6** | Mód. 5 (parte) — Analítica y Cierres | Z-Report (arqueo por método + pago a barberos), métricas | 4, 5 | [06-reports-closing](modules/06-reports-closing.md) |
 | **7** | Mód. 6 — Seguridad transversal | Auditoría de use-cases (`AuditLog`), hardening RBAC por sucursal | 0, 4 | [07-security-audit](modules/07-security-audit.md) |
+| **8** | Frontend — Portal del Barbero | App Next.js 16, cola reactiva, creación de tickets, widget de rendimiento | 3, 4 | [08-frontend-barber-portal](modules/08-frontend-barber-portal.md) |
+| **9** | Frontend — Estación POS y Caja | Estación POS, apertura/cierre de caja, pago dividido, propinas y vuelto | 4, 8 | [09-frontend-pos-station](modules/09-frontend-pos-station.md) |
 
 ---
 
