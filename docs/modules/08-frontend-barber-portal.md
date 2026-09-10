@@ -101,18 +101,18 @@ flowchart TD
 
 ## 4. Plan de Implementación por Pasos
 
-- [ ] **Paso 8.1 — Dependencias e Infraestructura de Cliente**:
+- [x] **Paso 8.1 — Dependencias e Infraestructura de Cliente**:
   - Instalar `socket.io-client` y `lucide-react` en `apps/web`.
   - Crear variables de entorno (`.env.local` con `NEXT_PUBLIC_API_URL` y `NEXT_PUBLIC_WS_URL`).
-- [ ] **Paso 8.2 — Cliente de API y Manejo de Auth**:
+- [x] **Paso 8.2 — Cliente de API y Manejo de Auth**:
   - Implementar `apps/web/src/lib/api/client.ts` con tipos derivados de DTOs del backend.
   - Implementar `AuthProvider` y formulario de Login (`/login`).
-- [ ] **Paso 8.3 — Hook de Tiempo Real (`useQueueRealtime`)**:
+- [x] **Paso 8.3 — Hook de Tiempo Real (`useQueueRealtime`)**:
   - Conexión Socket.IO con token JWT hacia el backend.
   - Manejo del evento `queue.updated` y sincronización de estado local.
-- [ ] **Paso 8.4 — Componentes del Portal del Barbero**:
+- [x] **Paso 8.4 — Componentes del Portal del Barbero**:
   - Componente de tarjeta de turno y cola general/asignada.
   - Componente `PerformanceWidget` (consumo de `/me/performance`).
   - Modal reactivo de selección de catálogo y creación de ticket (`/tickets`).
-- [ ] **Paso 8.5 — Verificación y Feedback Loop**:
-  - Prueba de flujo de punta a punta: Barbero toma cliente de la cola → genera ticket → actualización instantánea vía WebSockets y actualización de métricas de rendimiento.
+- [x] **Paso 8.5 — Verificación y Feedback Loop**:
+  - Prueba de compilación Next.js 16 (Turbopack) y ESLint pasando al 100% sin errores.
