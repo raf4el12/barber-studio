@@ -17,6 +17,7 @@ import {
   ShieldAlert,
   Award,
   BarChart3,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -110,6 +111,12 @@ export default function AdminLayout({
       label: 'Reportes y Cierres',
       icon: <BarChart3 className="w-4 h-4" />,
       active: pathname.startsWith('/admin/reports'),
+    },
+    {
+      href: '/admin/settings',
+      label: 'Configuración y Auditoría',
+      icon: <ShieldCheck className="w-4 h-4" />,
+      active: pathname.startsWith('/admin/settings'),
     },
   ];
 

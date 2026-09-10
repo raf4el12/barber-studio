@@ -44,7 +44,6 @@ import type {
   BusinessMetricsReport,
   Setting,
   UpsertSettingDto,
-  AuditLog,
   ListAuditLogsQuery,
   AuditLogsResponse,
 } from '@/types/api';
