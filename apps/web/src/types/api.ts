@@ -418,3 +418,92 @@ export interface RedeemLoyaltyDto {
   reason: string;
 }
 
+export interface ZReportScope {
+  kind: 'register' | 'day';
+  cashRegisterId?: string;
+  branchId?: string;
+  date?: string;
+}
+
+export interface ZReportRegister {
+  id: string;
+  branchId: string;
+  openedAt: string;
+  closedAt: string | null;
+  openingAmount: number;
+  closingCountedCash: number | null;
+}
+
+export interface IncomeByMethod {
+  methodCode: string;
+  methodName: string;
+  total: number;
+  count: number;
+}
+
+export interface TicketTotals {
+  tickets: number;
+  subtotal: number;
+  discounts: number;
+  tax: number;
+  tips: number;
+  revenue: number;
+}
+
+export interface CashReconciliation {
+  expected: number;
+  counted: number | null;
+  difference: number | null;
+}
+
+export interface BarberPayout {
+  barberId: string;
+  barberName: string;
+  tickets: number;
+  commission: number;
+  tips: number;
+  total: number;
+}
+
+export interface ZReportData {
+  scope: ZReportScope;
+  register: ZReportRegister | null;
+  incomeByMethod: IncomeByMethod[];
+  totals: TicketTotals;
+  cash: CashReconciliation | null;
+  payouts: BarberPayout[];
+}
+
+export interface BarberPayoutsReport {
+  branchId?: string;
+  from: string;
+  to: string;
+  payouts: BarberPayout[];
+  totals: {
+    commission: number;
+    tips: number;
+  };
+}
+
+export interface DailyVolume {
+  date: string;
+  tickets: number;
+  revenue: number;
+}
+
+export interface TopService {
+  serviceId: string;
+  serviceName: string;
+  quantity: number;
+  revenue: number;
+}
+
+export interface BusinessMetricsReport {
+  branchId?: string;
+  from: string;
+  to: string;
+  dailyVolume: DailyVolume[];
+  topBarbers: BarberPayout[];
+  topServices: TopService[];
+}
+

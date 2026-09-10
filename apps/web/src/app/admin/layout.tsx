@@ -16,6 +16,7 @@ import {
   Loader2,
   ShieldAlert,
   Award,
+  BarChart3,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -103,6 +104,12 @@ export default function AdminLayout({
       label: 'Clientes y Puntos',
       icon: <Award className="w-4 h-4" />,
       active: pathname.startsWith('/admin/customers'),
+    },
+    {
+      href: '/admin/reports',
+      label: 'Reportes y Cierres',
+      icon: <BarChart3 className="w-4 h-4" />,
+      active: pathname.startsWith('/admin/reports'),
     },
   ];
 
